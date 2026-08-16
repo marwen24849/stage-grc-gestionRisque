@@ -2,6 +2,7 @@ package tn.esprit.backend.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tn.esprit.backend.dto.ActiviteRequestDTO;
@@ -27,6 +28,7 @@ public class ActiviteServiceImpl implements ActiviteService {
     private final ActiviteMapper activiteMapper;
 
     @Override
+    @Tool(name = "createActivite", description = "Crée une activité pour un responsable GRC.")
     @Transactional
     public ActiviteResponseDTO create(ActiviteRequestDTO dto) {
         log.info("Création d'une activité pour le responsable ID : {}", dto.getResponsableId());
@@ -46,6 +48,7 @@ public class ActiviteServiceImpl implements ActiviteService {
     }
 
     @Override
+    @Tool(name = "updateActivite", description = "Met à jour les informations d'une activité existante.")
     @Transactional
     public ActiviteResponseDTO update(Long id, ActiviteRequestDTO dto) {
         log.info("Mise à jour de l'activité ID : {}", id);
@@ -73,6 +76,7 @@ public class ActiviteServiceImpl implements ActiviteService {
     }
 
     @Override
+    @Tool(name = "getActiviteById", description = "Récupère une activité par son identifiant.")
     public ActiviteResponseDTO findById(Long id) {
         Activite activite = activiteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Activité non trouvée avec ID : " + id));
@@ -80,11 +84,13 @@ public class ActiviteServiceImpl implements ActiviteService {
     }
 
     @Override
+    @Tool(name = "listActivites", description = "Liste toutes les activités de la plateforme GRC.")
     public List <ActiviteResponseDTO> findAll() {
         return activiteMapper.toResponseList(activiteRepository.findAll());
     }
 
     @Override
+    @Tool(name = "listActivitesByResponsable", description = "Liste les activités associées à un responsable donné.")
     public List<ActiviteResponseDTO> findByResponsable(Long responsableId) {
         if (!responsableRepository.existsById(responsableId)) {
             throw new ResourceNotFoundException("Responsable non trouvé avec ID : " + responsableId);
@@ -93,6 +99,7 @@ public class ActiviteServiceImpl implements ActiviteService {
     }
 
     @Override
+    @Tool(name = "deleteActivite", description = "Supprime une activité existante.")
     @Transactional
     public void delete(Long id) {
         if (!activiteRepository.existsById(id)) {

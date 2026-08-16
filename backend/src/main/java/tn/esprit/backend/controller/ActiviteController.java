@@ -16,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/activites")
 @RequiredArgsConstructor
+@CrossOrigin
 public class ActiviteController {
 
     private final ActiviteService activiteService;

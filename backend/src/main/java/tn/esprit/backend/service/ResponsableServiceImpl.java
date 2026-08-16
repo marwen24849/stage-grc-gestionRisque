@@ -3,6 +3,7 @@ package tn.esprit.backend.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tn.esprit.backend.dto.ResponsableRequestDTO;
@@ -27,6 +28,7 @@ public class ResponsableServiceImpl implements ResponsableService {
     private final ResponsableMapper responsableMapper;
 
     @Override
+    @Tool(name = "createResponsable", description = "Crée un responsable pour un client donné.")
     @Transactional
     public ResponsableResponseDTO create(ResponsableRequestDTO dto) {
         log.info("Création d'un responsable pour le client ID : {}", dto.getClientId());
@@ -45,6 +47,7 @@ public class ResponsableServiceImpl implements ResponsableService {
     }
 
     @Override
+    @Tool(name = "updateResponsable", description = "Met à jour les informations d'un responsable existant.")
     @Transactional
     public ResponsableResponseDTO update(Long id, ResponsableRequestDTO dto) {
         log.info("Mise à jour du responsable ID : {}", id);
@@ -70,6 +73,7 @@ public class ResponsableServiceImpl implements ResponsableService {
     }
 
     @Override
+    @Tool(name = "getResponsableById", description = "Récupère un responsable par son identifiant.")
     public ResponsableResponseDTO findById(Long id) {
         Responsable responsable = responsableRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Responsable non trouvé avec ID : " + id));
@@ -77,11 +81,13 @@ public class ResponsableServiceImpl implements ResponsableService {
     }
 
     @Override
+    @Tool(name = "listResponsables", description = "Liste tous les responsables enregistrés dans la plateforme GRC.")
     public List<ResponsableResponseDTO> findAll() {
         return responsableMapper.toResponseList(responsableRepository.findAll());
     }
 
     @Override
+    @Tool(name = "listResponsablesByClient", description = "Liste les responsables associés à un client donné.")
     public List<ResponsableResponseDTO> findByClient(Long clientId) {
         if (!clientRepository.existsById(clientId)) {
             throw new ResourceNotFoundException("Client non trouvé avec ID : " + clientId);
@@ -90,6 +96,7 @@ public class ResponsableServiceImpl implements ResponsableService {
     }
 
     @Override
+    @Tool(name = "deleteResponsable", description = "Supprime un responsable de la plateforme GRC.")
     @Transactional
     public void delete(Long id) {
         if (!responsableRepository.existsById(id)) {

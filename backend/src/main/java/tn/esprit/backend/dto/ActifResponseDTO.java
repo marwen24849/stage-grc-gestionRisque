@@ -17,4 +17,14 @@ public class ActifResponseDTO {
     private List<ActifResponseDTO> enfants; // Pour l'arborescence
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    // Valeurs numériques saisies par le consultant
+    private Integer disponibiliteLevel;
+    private Integer integriteLevel;
+    private Integer confidentialiteLevel;
+    private Integer tracabiliteLevel;
+
+    // Valeurs dérivées automatiquement
+    private Integer niveauMax;
+    private java.math.BigDecimal valeur;
+    private String actifSecondaire;
 }

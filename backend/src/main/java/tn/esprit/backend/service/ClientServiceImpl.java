@@ -3,6 +3,7 @@ package tn.esprit.backend.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tn.esprit.backend.dto.ClientRequestDTO;
@@ -24,6 +25,7 @@ public class ClientServiceImpl implements ClientService {
     private final ClientMapper clientMapper;
 
     @Override
+    @Tool(name = "createClient", description = "Crée un client dans la plateforme GRC.")
     @Transactional
     public ClientResponseDTO create(ClientRequestDTO dto) {
         log.info("Création d'un nouveau client : {}", dto.getNom());
@@ -38,6 +40,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    @Tool(name = "updateClient", description = "Met à jour les informations d'un client existant.")
     @Transactional
     public ClientResponseDTO update(Long id, ClientRequestDTO dto) {
         log.info("Mise à jour du client ID : {}", id);
@@ -56,6 +59,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    @Tool(name = "getClientById", description = "Récupère un client par son identifiant.")
     public ClientResponseDTO findById(Long id) {
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Client non trouvé avec ID : " + id));
@@ -63,11 +67,13 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    @Tool(name = "listClients", description = "Liste tous les clients enregistrés dans la plateforme GRC.")
     public List<ClientResponseDTO> findAll() {
         return clientMapper.toResponseList(clientRepository.findAll());
     }
 
     @Override
+    @Tool(name = "deleteClient", description = "Supprime un client de la plateforme GRC.")
     @Transactional
     public void delete(Long id) {
         if (!clientRepository.existsById(id)) {

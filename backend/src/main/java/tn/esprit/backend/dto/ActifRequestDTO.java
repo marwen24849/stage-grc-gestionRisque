@@ -23,5 +23,16 @@ public class ActifRequestDTO {
     @NotNull(message = "L'activité est obligatoire")
     private Long activiteId;
 
+    // Valeurs numériques saisies par le consultant (facultatif pour les mises à jour)
+    private Integer disponibiliteLevel;
+    private Integer integriteLevel;
+    private Integer confidentialiteLevel;
+    private Integer tracabiliteLevel;
+
+    // Valeurs dérivées automatiquement à partir du niveau de risque maximal
+    private Integer niveauMax;
+    private java.math.BigDecimal valeur;
+    private String actifSecondaire;
+
     private Long parentId; // null si c'est un actif racine
 }

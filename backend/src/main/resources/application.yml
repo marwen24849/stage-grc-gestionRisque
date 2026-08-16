@@ -16,6 +16,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  ai:
+    openai:
+      api-key: ${OPENROUTER_API_KEY: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}
+      base-url: https://openrouter.ai/api/v1
+      chat:
+        model: nvidia/nemotron-3.5-lightning:free
 
 jwt:
   secret: ${JWT_SECRET:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
@@ -32,3 +38,5 @@ logging:
   level:
     tn.esprit.backend: DEBUG
     org.springframework.security: INFO
+
+
