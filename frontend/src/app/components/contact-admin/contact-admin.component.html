@@ -1,0 +1,45 @@
+<div class="auth-shell">
+  <div class="auth-panel">
+    <div class="auth-header">
+      <div class="brand-mark">
+        <i class="bi bi-shield-check"></i>
+        <span>GRC</span>
+      </div>
+      <p class="eyebrow">Support</p>
+      <h1>Contactez votre administrateur</h1>
+      <p class="subtitle">Décrivez votre besoin pour demander la création d’un compte.</p>
+    </div>
+
+    <form class="auth-form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="field-group">
+        <label for="admin-name">Nom complet</label>
+        <div class="input-wrap">
+          <i class="bi bi-person"></i>
+          <input id="admin-name" type="text" placeholder="Votre nom complet" required />
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label for="admin-email">Email</label>
+        <div class="input-wrap">
+          <i class="bi bi-envelope"></i>
+          <input id="admin-email" type="email" placeholder="votre.email@entreprise.com" required />
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label for="admin-message">Message</label>
+        <textarea id="admin-message" rows="5" placeholder="Je souhaite demander la création d'un compte pour..."></textarea>
+      </div>
+
+      <button type="submit" class="primary-btn">
+        Envoyer la demande
+        <i class="bi bi-arrow-right"></i>
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <a routerLink="/login">Retour à la connexion</a>
+    </div>
+  </div>
+</div>

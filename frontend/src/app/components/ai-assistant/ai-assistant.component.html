@@ -1,0 +1,55 @@
+<div class="assistant-launcher">
+  <button type="button" class="assistant-toggle" (click)="toggleAssistant()" aria-label="Ouvrir l'assistant IA">
+    <span class="assistant-icon"><i class="bi bi-robot"></i></span>
+    <span class="assistant-label">Assistant GRC</span>
+    <span class="assistant-status" [class.online]="!isLoading"></span>
+  </button>
+</div>
+
+<div class="assistant-panel" *ngIf="isOpen" role="dialog" aria-label="Assistant IA GRC">
+  <div class="assistant-header">
+    <div class="assistant-title-wrap">
+      <span class="assistant-header-badge"><i class="bi bi-stars"></i></span>
+      <div>
+        <h3>Assistant GRC</h3>
+        <small>IA de supervision</small>
+      </div>
+    </div>
+    <button type="button" class="close-button" (click)="toggleAssistant()" aria-label="Fermer l'assistant">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <div class="assistant-body" #messagesContainer>
+    <div *ngFor="let message of messages" class="message-row" [class.user]="message.role === 'user'" [class.assistant]="message.role === 'assistant'">
+      <div class="message-bubble">
+        <div *ngIf="message.role === 'assistant'" class="message-avatar"><i class="bi bi-robot"></i></div>
+        <div class="message-content" [innerHTML]="message.safeHtml"></div>
+      </div>
+    </div>
+
+    <div *ngIf="isLoading" class="message-row assistant">
+      <div class="message-bubble typing-bubble">
+        <div class="message-avatar"><i class="bi bi-robot"></i></div>
+        <div class="typing-indicator">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <form class="assistant-form" (ngSubmit)="sendMessage()">
+    <textarea
+      [(ngModel)]="inputText"
+      name="message"
+      rows="1"
+      placeholder="Posez une question sur votre GRC..."
+      (keydown)="onTextareaKeydown($event)"
+    ></textarea>
+    <button type="submit" class="send-button" [disabled]="isLoading || !inputText.trim()" aria-label="Envoyer">
+      <i class="bi bi-send-fill"></i>
+    </button>
+  </form>
+</div>

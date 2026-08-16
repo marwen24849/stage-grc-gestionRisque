@@ -1,0 +1,37 @@
+<!-- topbar.component.html -->
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger-btn" type="button" (click)="menuToggle.emit()" aria-label="Ouvrir le menu">
+      <i class="bi bi-list"></i>
+    </button>
+    <h1 class="page-title">{{ title }}</h1>
+  </div>
+
+  <div class="topbar-right">
+    <button class="icon-btn" type="button" title="Notifications">
+      <i class="bi bi-bell"></i>
+      <span class="badge" *ngIf="notificationCount > 0">{{ notificationCount }}</span>
+    </button>
+
+    <div class="user-menu">
+      <button class="user-trigger" type="button" (click)="toggleUserMenu()">
+        <div class="user-avatar">
+          <i class="bi bi-person-fill"></i>
+        </div>
+        <i class="bi bi-chevron-down" [class.rotated]="userMenuOpen"></i>
+      </button>
+
+      <div class="user-dropdown" *ngIf="userMenuOpen">
+        <a class="dropdown-item" routerLink="/profil" (click)="closeUserMenu()">
+          <i class="bi bi-person"></i> Mon profil
+        </a>
+        <a class="dropdown-item" routerLink="/parametres" (click)="closeUserMenu()">
+          <i class="bi bi-gear"></i> Paramètres
+        </a>
+        <button class="dropdown-item danger" type="button">
+          <i class="bi bi-box-arrow-right"></i> Déconnexion
+        </button>
+      </div>
+    </div>
+  </div>
+</header>

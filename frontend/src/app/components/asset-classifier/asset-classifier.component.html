@@ -1,0 +1,93 @@
+<div class="classifier" *ngIf="assetId">
+  <div class="classifier-header">
+    <div class="classifier-icon">
+      <i class="bi bi-shield-check"></i>
+    </div>
+    <div class="classifier-heading">
+      <h2 class="classifier-title">Classification</h2>
+      <p class="classifier-subtitle">Actif #{{ assetId }}</p>
+    </div>
+  </div>
+
+  <div class="classifier-body">
+    <div class="field">
+      <label>Disponibilité</label>
+      <div class="level-selector">
+        <button
+          type="button"
+          *ngFor="let n of levels"
+          class="level-btn"
+          [class.active]="disponibiliteLevel === n"
+          [attr.data-level]="n"
+          (click)="disponibiliteLevel = n"
+        >
+          <span class="level-number">{{ n }}</span>
+          <span class="level-label">{{ ['Faible', 'Moyen', 'Élevé', 'Critique'][n - 1] }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Intégrité</label>
+      <div class="level-selector">
+        <button
+          type="button"
+          *ngFor="let n of levels"
+          class="level-btn"
+          [class.active]="integriteLevel === n"
+          [attr.data-level]="n"
+          (click)="integriteLevel = n"
+        >
+          <span class="level-number">{{ n }}</span>
+          <span class="level-label">{{ ['Faible', 'Moyen', 'Élevé', 'Critique'][n - 1] }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Confidentialité</label>
+      <div class="level-selector">
+        <button
+          type="button"
+          *ngFor="let n of levels"
+          class="level-btn"
+          [class.active]="confidentialiteLevel === n"
+          [attr.data-level]="n"
+          (click)="confidentialiteLevel = n"
+        >
+          <span class="level-number">{{ n }}</span>
+          <span class="level-label">{{ ['Faible', 'Moyen', 'Élevé', 'Critique'][n - 1] }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Traçabilité</label>
+      <div class="level-selector">
+        <button
+          type="button"
+          *ngFor="let n of levels"
+          class="level-btn"
+          [class.active]="tracabiliteLevel === n"
+          [attr.data-level]="n"
+          (click)="tracabiliteLevel = n"
+        >
+          <span class="level-number">{{ n }}</span>
+          <span class="level-label">{{ ['Faible', 'Moyen', 'Élevé', 'Critique'][n - 1] }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button type="button" class="btn-save" (click)="save()">
+      <i class="bi bi-check2"></i>
+      Sauvegarder
+    </button>
+  </div>
+</div>
+
+<div class="classifier-empty" *ngIf="!assetId">
+  <i class="bi bi-shield-exclamation"></i>
+  <span>Sélectionnez un actif pour ouvrir la classification.</span>
+</div>

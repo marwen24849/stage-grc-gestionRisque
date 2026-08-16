@@ -1,0 +1,295 @@
+<div class="container-fluid vh-100 p-3 bg-light">
+  <div class="row g-3 h-100">
+    <div class="col-12 col-md-4 d-flex flex-column">
+      <div class="card shadow-sm rounded-3 h-100 d-flex flex-column overflow-hidden">
+        <div class="card-header bg-white border-0 pt-3 pb-2">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div>
+              <h5 class="fw-bold text-dark mb-0">Actifs</h5>
+              <small class="text-muted">{{ activiteNom || 'Activité non renseignée' }}</small>
+            </div>
+            <span class="badge bg-light text-dark rounded-pill px-3 py-1">
+              {{ filteredActifs.length }}
+            </span>
+          </div>
+
+          <div class="input-group input-group-sm mb-2">
+            <span class="input-group-text bg-white border-end-0">
+              <i class="bi bi-search text-secondary"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control form-control-sm border-start-0 ps-0"
+              placeholder="Rechercher un actif..."
+              [(ngModel)]="searchTerm"
+            />
+          </div>
+
+          <div class="d-flex gap-2">
+            <button
+              class="btn btn-primary btn-sm w-100 d-flex align-items-center justify-content-center gap-2"
+              (click)="startCreate()"
+              [disabled]="!activiteId"
+            >
+              <i class="bi bi-plus-lg"></i> Ajouter
+            </button>
+            <button
+              class="btn btn-outline-secondary btn-sm"
+              (click)="goBack()"
+              title="Retour aux activités"
+            >
+              <i class="bi bi-arrow-left"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body p-2 overflow-auto flex-grow-1">
+          <div
+            *ngFor="let actif of filteredActifs"
+            (click)="selectActif(actif)"
+            class="d-flex align-items-center justify-content-between p-2 rounded-2 cursor-pointer transition-all hover-bg-light"
+            [ngClass]="{
+              'bg-primary bg-opacity-10 border-start border-4 border-primary': selectedActif?.id === actif.id && !isCreating,
+              'border-0': !(selectedActif?.id === actif.id && !isCreating)
+            }"
+            style="cursor: pointer; transition: all 0.15s;"
+          >
+            <div class="d-flex align-items-center flex-grow-1 min-w-0">
+              <div class="flex-shrink-0 me-2">
+                <span class="avatar-initials d-flex align-items-center justify-content-center text-white fw-semibold rounded-circle"
+                      style="width: 40px; height: 40px; background-color: #0984e3;">
+                  {{ getInitials(actif) }}
+                </span>
+              </div>
+              <div class="flex-grow-1 min-w-0">
+                <p class="fw-semibold text-dark mb-0 text-truncate">{{ actif.nom }}</p>
+                <small class="text-muted text-truncate d-block">{{ actif.type || actif.description }}</small>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="btn btn-sm btn-light border-0 rounded-circle d-flex align-items-center justify-content-center classifier-trigger"
+              (click)="toggleClassifier(actif, $event)"
+              title="Classer l'actif"
+              aria-label="Classer l'actif"
+            >
+              <i class="bi bi-shield-check"></i>
+            </button>
+          </div>
+
+          <div *ngIf="filteredActifs.length === 0 && !loading" class="text-center text-muted py-4 small">
+            Aucun actif trouvé
+          </div>
+          <div *ngIf="loading" class="text-center text-muted py-4 small">
+            Chargement...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-8 d-flex flex-column">
+      <div class="card shadow-sm rounded-3 h-100 d-flex flex-column p-3 overflow-auto">
+
+        <div *ngIf="isCreating || isEditing">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold text-dark mb-0">{{ isCreating ? 'Nouvel actif' : "Modifier l'actif" }}</h5>
+            <button class="btn-close" (click)="cancelForm()"></button>
+          </div>
+
+          <form [formGroup]="actifForm" (ngSubmit)="submitForm()">
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label fw-medium">Nom</label>
+                <input type="text" class="form-control" formControlName="nom"
+                  [class.is-invalid]="actifForm.get('nom')?.invalid && actifForm.get('nom')?.touched"
+                  placeholder="Nom de l'actif" />
+                <div *ngIf="actifForm.get('nom')?.invalid && actifForm.get('nom')?.touched" class="invalid-feedback">Requis</div>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-medium">Type</label>
+                <input type="text" class="form-control" formControlName="type" placeholder="Ex: Application, Document, Système" />
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-medium">Actif secondaire</label>
+                <input type="text" class="form-control" formControlName="actifSecondaire" placeholder="Ex: Document, Serveur, Base de données" />
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-medium">Niveau de classification</label>
+                <select class="form-select" formControlName="niveauId">
+                  <option *ngFor="let niveau of niveaux" [value]="niveau.id">{{ niveau.label }}</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-medium">Actif parent</label>
+                <select class="form-select" formControlName="parentId">
+                  <option [ngValue]="null">Aucun parent</option>
+                  <option *ngFor="let actif of actifs" [ngValue]="actif.id" [hidden]="selectedActif && actif.id === selectedActif.id">
+                    {{ actif.nom }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label fw-medium">Description</label>
+                <textarea class="form-control" rows="4" formControlName="description" placeholder="Description de l'actif"></textarea>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <h6 class="fw-semibold text-dark mb-3">Classification</h6>
+              <div class="row g-3">
+                <div class="col-12 col-md-6 col-xl-3">
+                  <label class="form-label fw-medium">Disponibilité</label>
+                  <input type="number" min="1" max="4" class="form-control" formControlName="disponibiliteLevel" />
+                </div>
+                <div class="col-12 col-md-6 col-xl-3">
+                  <label class="form-label fw-medium">Intégrité</label>
+                  <input type="number" min="1" max="4" class="form-control" formControlName="integriteLevel" />
+                </div>
+                <div class="col-12 col-md-6 col-xl-3">
+                  <label class="form-label fw-medium">Confidentialité</label>
+                  <input type="number" min="1" max="4" class="form-control" formControlName="confidentialiteLevel" />
+                </div>
+                <div class="col-12 col-md-6 col-xl-3">
+                  <label class="form-label fw-medium">Traçabilité</label>
+                  <input type="number" min="1" max="4" class="form-control" formControlName="tracabiliteLevel" />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label fw-medium">Niveau max</label>
+                  <input type="number" class="form-control" formControlName="niveauMax" readonly />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label fw-medium">Valeur</label>
+                  <input type="number" class="form-control" formControlName="valeur" readonly />
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+              <button type="button" class="btn btn-outline-secondary" (click)="cancelForm()">Annuler</button>
+              <button type="submit" class="btn btn-primary" [disabled]="actifForm.invalid">{{ isCreating ? 'Enregistrer' : 'Mettre à jour' }}</button>
+            </div>
+          </form>
+        </div>
+
+        <div *ngIf="!isCreating && !isEditing && selectedActif" class="dashboard-content-split" [class.has-classifier]="showClassifier">
+          <div class="details-panel">
+            <div class="d-flex flex-wrap align-items-start justify-content-between mb-3">
+              <div>
+                <h4 class="fw-bold text-dark mb-0">{{ selectedActif.nom }}</h4>
+                <span class="text-muted">{{ selectedActif.type || 'Type non défini' }}</span>
+              </div>
+              <div class="d-flex gap-2 mt-2 mt-sm-0">
+                <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1" (click)="startEdit()">
+                  <i class="bi bi-pencil"></i> Modifier
+                </button>
+                <button class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1" (click)="deleteActif()">
+                  <i class="bi bi-trash3"></i> Supprimer
+                </button>
+              </div>
+            </div>
+
+            <div class="row g-3 bg-light p-3 rounded-3">
+              <div class="col-12 d-flex align-items-start gap-2">
+                <i class="bi bi-file-text fs-5 text-secondary mt-1"></i>
+                <div>
+                  <small class="text-muted d-block">Description</small>
+                  <span class="fw-medium">{{ selectedActif.description || 'Aucune description' }}</span>
+                </div>
+              </div>
+              <div class="col-12 col-md-6 d-flex align-items-center gap-2">
+                <i class="bi bi-shield-lock fs-5 text-secondary"></i>
+                <div>
+                  <small class="text-muted d-block">Classification</small>
+                  <span class="fw-medium">Niveau {{ selectedActif.niveau?.niveau || 'N/A' }}</span>
+                </div>
+              </div>
+              <div class="col-12 col-md-6 d-flex align-items-center gap-2">
+                <i class="bi bi-currency-bitcoin fs-5 text-secondary"></i>
+                <div>
+                  <small class="text-muted d-block">Valeur</small>
+                  <span class="fw-medium">{{ selectedActif.valeur ?? 'N/A' }}</span>
+                </div>
+              </div>
+              <div class="col-12 col-md-6 d-flex align-items-center gap-2">
+                <i class="bi bi-diagram-3 fs-5 text-secondary"></i>
+                <div>
+                  <small class="text-muted d-block">Actif secondaire</small>
+                  <span class="fw-medium">{{ selectedActif.actifSecondaire || 'Non renseigné' }}</span>
+                </div>
+              </div>
+              <div class="col-12 col-md-6 d-flex align-items-center gap-2">
+                <i class="bi bi-calendar3 fs-5 text-secondary"></i>
+                <div>
+                  <small class="text-muted d-block">Ajouté le</small>
+                  <span class="fw-medium">{{ selectedActif.createdAt | date:'dd/MM/yyyy' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <h6 class="fw-semibold text-secondary">Informations complémentaires</h6>
+              <ul class="list-unstyled small">
+                <li class="d-flex align-items-center gap-2 py-1">
+                  <span class="badge bg-primary rounded-circle p-1"></span>
+                  Activité : {{ selectedActif.activite?.nom || 'Non renseignée' }}
+                </li>
+                <li class="d-flex align-items-center gap-2 py-1">
+                  <span class="badge bg-primary rounded-circle p-1"></span>
+                  Niveau de classification : {{ selectedActif.niveau?.niveau || 'N/A' }}
+                </li>
+                <li class="d-flex align-items-center gap-2 py-1">
+                  <span class="badge bg-primary rounded-circle p-1"></span>
+                  Niveau max : {{ selectedActif.niveauMax ?? 'N/A' }}
+                </li>
+                <li class="d-flex align-items-center gap-2 py-1">
+                  <span class="badge bg-primary rounded-circle p-1"></span>
+                  Parent : {{ selectedActif.parentId ? 'Actif #' + selectedActif.parentId : 'Aucun parent' }}
+                </li>
+                <li *ngIf="selectedActif.updatedAt" class="d-flex align-items-center gap-2 py-1">
+                  <span class="badge bg-primary rounded-circle p-1"></span>
+                  Dernière modification le {{ selectedActif.updatedAt | date:'dd/MM/yyyy' }}
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="classifier-panel" *ngIf="showClassifier">
+            <div class="classifier-header-inline d-flex justify-content-between align-items-center mb-2">
+              <span class="fw-semibold text-dark">Classification</span>
+              <button type="button" class="btn btn-sm btn-light border rounded-circle p-2" (click)="closeClassifier()" aria-label="Fermer">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+            <app-asset-classifier [assetId]="selectedActif.id"></app-asset-classifier>
+          </div>
+        </div>
+
+        <div *ngIf="!isCreating && !isEditing && !selectedActif && !loading" class="d-flex flex-column align-items-center justify-content-center h-100 text-muted">
+          <i class="bi bi-box-seam fs-1"></i>
+          <p class="mt-2 fs-5 fw-light">Aucun actif sélectionné</p>
+          <p class="small">Sélectionnez un actif ou ajoutez-en un nouveau.</p>
+        </div>
+
+        <div *ngIf="!activiteId && !isCreating && !loading" class="d-flex flex-column align-items-center justify-content-center h-100 text-muted">
+          <i class="bi bi-exclamation-circle fs-1"></i>
+          <p class="mt-2 fs-5 fw-light">Aucune activité sélectionnée</p>
+          <p class="small">Accédez à une activité puis gérez les actifs associés.</p>
+        </div>
+
+        <div *ngIf="loading" class="d-flex align-items-center justify-content-center h-100 text-muted">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

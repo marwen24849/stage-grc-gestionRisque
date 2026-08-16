@@ -1,0 +1,124 @@
+<div class="login-page">
+
+  <!-- ============ Panneau de marque (gauche) ============ -->
+  <aside class="login-branding">
+    <div class="branding-decor" aria-hidden="true"></div>
+
+    <div class="branding-content">
+      <div class="brand-logo">
+        <i class="bi bi-shield-check"></i>
+        <span>GRC</span>
+      </div>
+
+      <p class="branding-title">La gestion des risques,<br>simplifiée.</p>
+      <p class="branding-subtitle">
+        Centralisez vos clients, vos activités et vos actifs, et classifiez
+        chaque risque selon les critères DICT — le tout dans un seul espace
+        pensé pour les consultants.
+      </p>
+
+      <ul class="branding-features">
+        <li>
+          <span class="feature-icon"><i class="bi bi-diagram-3"></i></span>
+          Cartographiez clients, responsables et activités
+        </li>
+        <li>
+          <span class="feature-icon"><i class="bi bi-shield-check"></i></span>
+          Classifiez vos actifs selon les critères DICT
+        </li>
+        <li>
+          <span class="feature-icon"><i class="bi bi-stars"></i></span>
+          Assistant IA intégré pour accélérer vos missions
+        </li>
+      </ul>
+    </div>
+
+    <p class="branding-footer">© 2026 GRC. Tous droits réservés.</p>
+  </aside>
+
+  <!-- ============ Panneau formulaire (droite) ============ -->
+  <main class="login-form-panel">
+    <div class="login-card">
+
+      <div class="brand-logo brand-logo-mobile">
+        <i class="bi bi-shield-check"></i>
+        <span>GRC</span>
+      </div>
+
+      <h1 class="login-title">Connexion</h1>
+      <p class="login-subtitle">Accédez à votre espace consultant</p>
+
+      <!-- Bandeau d'erreur — masqué par défaut, à afficher en cas d'échec d'authentification -->
+      <div class="error-banner" hidden>
+        <i class="bi bi-exclamation-circle"></i>
+        <span>Email ou mot de passe incorrect.</span>
+      </div>
+
+      <form class="login-form">
+        <div class="form-field">
+          <label for="email">Email professionnel</label>
+          <div class="input-wrap">
+            <i class="bi bi-envelope"></i>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="vous@entreprise.com"
+              autocomplete="email"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="password">Mot de passe</label>
+          <div class="input-wrap">
+            <i class="bi bi-lock"></i>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+              required
+            />
+            <button type="button" class="toggle-password" aria-label="Afficher le mot de passe">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="checkbox-field">
+            <input type="checkbox" name="remember" />
+            <span>Se souvenir de moi</span>
+          </label>
+          <a routerLink="/forgot-password" class="forgot-link">Mot de passe oublié ?</a>
+        </div>
+
+        <button type="submit" class="btn-login" routerLink="/dashboard">
+          Se connecter
+          <i class="bi bi-arrow-right"></i>
+        </button>
+      </form>
+
+      <p class="login-help">
+        Pas encore de compte ?
+        <a routerLink="/register">Demander un accès</a>
+        ou <a routerLink="/contact-admin">contacter votre administrateur</a>
+      </p>
+    </div>
+  </main>
+
+</div>
+
+<script>
+  document.querySelectorAll('.toggle-password').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const input = btn.previousElementSibling;
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+      btn.querySelector('i').className = isPassword ? 'bi bi-eye-slash' : 'bi bi-eye';
+    });
+  });
+</script>

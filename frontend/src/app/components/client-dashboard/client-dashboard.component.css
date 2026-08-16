@@ -1,0 +1,453 @@
+/* ============================================================
+   client-dashboard.component.css
+   Design system: "Dossier" — a calm, confident CRM aesthetic.
+   UI chrome in Inter, client identity in Newsreader (serif) to
+   give each profile a personal, editorial feel rather than a
+   generic admin-panel look.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,wght@0,500;0,600;1,500&display=swap');
+
+:host {
+  /* ---- Palette ---- */
+  --ink: #1A2333;
+  --slate: #5B6472;
+  --slate-soft: #8A93A3;
+  --canvas: #F4F6FB;
+  --surface: #FFFFFF;
+  --border: #E4E8F1;
+
+  --primary: #2E4CA6;
+  --primary-dark: #22397D;
+  --primary-soft: #EDF1FC;
+
+  --accent: #D9A441;
+  --danger: #D8515C;
+  --danger-soft: #FBEAEC;
+
+  /* Avatar accent cycle */
+  --avatar-1: linear-gradient(135deg, #2E4CA6, #6482DE);
+  --avatar-2: linear-gradient(135deg, #C9902E, #E8C179);
+  --avatar-3: linear-gradient(135deg, #2F8F7A, #63C4AB);
+  --avatar-4: linear-gradient(135deg, #9A4A82, #C97CB0);
+
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --shadow-soft: 0 1px 2px rgba(20, 30, 60, 0.04), 0 8px 24px -8px rgba(20, 30, 60, 0.12);
+  --shadow-hover: 0 4px 10px rgba(20, 30, 60, 0.06), 0 14px 32px -10px rgba(20, 30, 60, 0.18);
+
+  display: block;
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--ink);
+}
+
+/* ============================================================
+   Page canvas
+   ============================================================ */
+
+.container-fluid.vh-100.p-3.bg-light {
+  background: var(--canvas) !important;
+}
+
+/* ============================================================
+   Cards
+   ============================================================ */
+
+.card.shadow-sm.rounded-3 {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-soft) !important;
+  background: var(--surface);
+}
+
+/* ============================================================
+   LEFT COLUMN — header, search, add button
+   ============================================================ */
+
+.card-header.bg-white.border-0.pt-3.pb-2 {
+  border-bottom: 1px solid var(--border) !important;
+  background: var(--surface) !important;
+}
+
+.card-header h5.fw-bold.text-dark {
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.badge.bg-light.text-dark.rounded-pill {
+  background: var(--primary-soft) !important;
+  color: var(--primary) !important;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+/* Search field */
+.input-group.input-group-sm {
+  border-radius: var(--radius-md);
+  transition: box-shadow 0.15s ease;
+}
+
+.input-group.input-group-sm:focus-within {
+  box-shadow: 0 0 0 3px var(--primary-soft);
+  border-radius: var(--radius-md);
+}
+
+.input-group-text.bg-white.border-end-0 {
+  background: var(--surface) !important;
+  border-color: var(--border) !important;
+  border-top-left-radius: var(--radius-md) !important;
+  border-bottom-left-radius: var(--radius-md) !important;
+  color: var(--slate-soft);
+}
+
+.form-control.form-control-sm.border-start-0.ps-0 {
+  border-color: var(--border) !important;
+  border-top-right-radius: var(--radius-md) !important;
+  border-bottom-right-radius: var(--radius-md) !important;
+  box-shadow: none !important;
+}
+
+.form-control.form-control-sm.border-start-0.ps-0::placeholder {
+  color: var(--slate-soft);
+}
+
+/* Add client button */
+.btn.btn-primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.btn.btn-primary:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  box-shadow: 0 6px 16px -4px rgba(46, 76, 166, 0.45);
+}
+
+.btn.btn-primary:active {
+  transform: translateY(1px);
+}
+
+.btn.btn-primary:disabled {
+  background: var(--slate-soft);
+  border-color: var(--slate-soft);
+  box-shadow: none;
+}
+
+/* ============================================================
+   LEFT COLUMN — client list
+   ============================================================ */
+
+.card-body.p-2.overflow-auto.flex-grow-1 > div.cursor-pointer {
+  transition: background-color 0.15s ease, transform 0.1s ease;
+  margin-bottom: 2px;
+}
+
+.hover-bg-light:hover {
+  background-color: var(--canvas);
+}
+
+/* Selected row — override bootstrap's default blue tint */
+.bg-primary.bg-opacity-10.border-start.border-4.border-primary {
+  background-color: var(--primary-soft) !important;
+  border-color: var(--primary) !important;
+  border-top-right-radius: var(--radius-md);
+  border-bottom-right-radius: var(--radius-md);
+}
+
+/* Avatar */
+.avatar-initials {
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.02em;
+  box-shadow: 0 0 0 2px var(--surface), 0 2px 6px rgba(20, 30, 60, 0.15);
+}
+
+/* Cycle avatar colors (overrides inline background-color from the template) */
+.card-body > div.cursor-pointer:nth-child(4n+1) .avatar-initials { background: var(--avatar-1) !important; }
+.card-body > div.cursor-pointer:nth-child(4n+2) .avatar-initials { background: var(--avatar-2) !important; }
+.card-body > div.cursor-pointer:nth-child(4n+3) .avatar-initials { background: var(--avatar-3) !important; }
+.card-body > div.cursor-pointer:nth-child(4n+4) .avatar-initials { background: var(--avatar-4) !important; }
+
+.card-body p.fw-semibold.text-dark {
+  color: var(--ink);
+}
+
+.card-body small.text-muted {
+  color: var(--slate) !important;
+}
+
+/* Empty / loading states in the list */
+.card-body .text-center.text-muted.py-4.small {
+  color: var(--slate-soft) !important;
+}
+
+/* ============================================================
+   Custom scrollbars (both columns)
+   ============================================================ */
+
+.overflow-auto {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.overflow-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.overflow-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-auto::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 8px;
+}
+
+.overflow-auto::-webkit-scrollbar-thumb:hover {
+  background-color: var(--slate-soft);
+}
+
+/* ============================================================
+   RIGHT COLUMN — shared panel entrance animation
+   ============================================================ */
+
+.col-12.col-md-8 .card > div {
+  animation: fadeSlideIn 0.3s ease both;
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   FORM — create / edit client
+   ============================================================ */
+
+.form-label.fw-medium {
+  color: var(--slate);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.form-control {
+  border-color: var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.55rem 0.85rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.form-control.is-invalid {
+  border-color: var(--danger);
+}
+
+.form-control.is-invalid:focus {
+  box-shadow: 0 0 0 3px var(--danger-soft);
+}
+
+.invalid-feedback {
+  color: var(--danger);
+  font-size: 0.8rem;
+}
+
+.btn-close {
+  transition: background-color 0.15s ease;
+  border-radius: 50%;
+  padding: 0.5rem;
+}
+
+.btn-close:hover {
+  background-color: var(--canvas);
+}
+
+.btn.btn-outline-secondary {
+  color: var(--slate);
+  border-color: var(--border);
+  font-weight: 500;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.btn.btn-outline-secondary:hover {
+  background-color: var(--canvas);
+  color: var(--ink);
+  border-color: var(--slate-soft);
+}
+
+.btn.btn-outline-danger {
+  color: var(--danger);
+  border-color: var(--danger);
+  font-weight: 500;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.btn.btn-outline-danger:hover {
+  background-color: var(--danger);
+  color: #fff;
+}
+
+/* ============================================================
+   DETAIL VIEW — client profile
+   ============================================================ */
+
+/* The client's name is the one editorial moment of the page */
+h4.fw-bold.text-dark {
+  font-family: 'Newsreader', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.7rem;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.d-flex.flex-wrap.align-items-start.justify-content-between span.text-muted {
+  color: var(--slate) !important;
+  font-size: 0.95rem;
+}
+
+/* Info grid panel */
+.row.g-3.bg-light.p-3.rounded-3 {
+  background: var(--canvas) !important;
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--border);
+}
+
+.row.g-3.bg-light.p-3.rounded-3 > .col-12.col-md-6.d-flex.align-items-center.gap-2 {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 0.9rem;
+  transition: box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.row.g-3.bg-light.p-3.rounded-3 > .col-12.col-md-6.d-flex.align-items-center.gap-2:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
+}
+
+.row.g-3.bg-light.p-3.rounded-3 i.bi {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  color: var(--primary) !important;
+  font-size: 1.05rem !important;
+  flex-shrink: 0;
+}
+
+.row.g-3.bg-light.p-3.rounded-3 small.text-muted {
+  color: var(--slate) !important;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.row.g-3.bg-light.p-3.rounded-3 span.fw-medium {
+  color: var(--ink);
+  font-size: 0.95rem;
+}
+
+/* Interactions timeline */
+h6.fw-semibold.text-secondary {
+  color: var(--slate) !important;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700 !important;
+  margin-bottom: 0.75rem;
+}
+
+ul.list-unstyled.small {
+  padding-left: 0.25rem;
+}
+
+ul.list-unstyled.small li {
+  position: relative;
+  padding: 0.5rem 0 0.5rem 1.5rem;
+  color: var(--slate);
+}
+
+ul.list-unstyled.small li:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  height: calc(100% + 0.25rem);
+  width: 2px;
+  background: var(--border);
+}
+
+ul.list-unstyled.small li span.badge.bg-primary.rounded-circle.p-1 {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  background: var(--primary) !important;
+  box-shadow: 0 0 0 4px var(--primary-soft);
+  z-index: 1;
+}
+
+/* ============================================================
+   Empty states + loading
+   ============================================================ */
+
+.d-flex.flex-column.align-items-center.justify-content-center.h-100.text-muted i.bi {
+  color: var(--slate-soft);
+  animation: floatSlow 3.5s ease-in-out infinite;
+}
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+.d-flex.flex-column.align-items-center.justify-content-center.h-100.text-muted p.fs-5 {
+  color: var(--slate);
+}
+
+.spinner-border.text-primary {
+  color: var(--primary) !important;
+}
+
+/* ============================================================
+   Accessibility & motion preferences
+   ============================================================ */
+
+.btn:focus-visible,
+.form-control:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ============================================================
+   Responsive tweaks
+   ============================================================ */
+
+@media (max-width: 767.98px) {
+  h4.fw-bold.text-dark {
+    font-size: 1.4rem;
+  }
+
+  .row.g-3.bg-light.p-3.rounded-3 {
+    padding: 0.75rem !important;
+  }
+}

@@ -1,0 +1,29 @@
+/* app.component.css (exemple d'intégration) */
+
+:host {
+  display: block;
+}
+
+.app-content {
+  margin-left: 224px; /* largeur de la sidebar */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #F5F7FA;
+  transition: margin-left 0.25s ease;
+}
+
+.app-content.sidebar-collapsed {
+  margin-left: 0;
+}
+
+.app-main {
+  flex: 1;
+  overflow-y: auto;
+}
+
+@media (max-width: 991.98px) {
+  .app-content {
+    margin-left: 0;
+  }
+}

@@ -1,0 +1,49 @@
+<!-- sidebar.component.html -->
+<aside class="sidebar" [class.sidebar-open]="open">
+
+  <div class="sidebar-brand">
+    <i class="bi bi-shield-check brand-icon"></i>
+    <span class="brand-text">GRC</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a
+      *ngFor="let item of navItems"
+      [routerLink]="item.route"
+      routerLinkActive="active"
+      class="nav-item"
+      (click)="onNavClick()"
+    >
+      <i class="bi" [ngClass]="item.icon"></i>
+      <span>{{ item.label }}</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="footer-row" (click)="toggleUserMenu()">
+      <div class="footer-avatar">
+        <i class="bi bi-person-fill"></i>
+      </div>
+      <div class="footer-info">
+        <p class="footer-name">Admin</p>
+        <p class="footer-role">Administrateur</p>
+      </div>
+      <i class="bi bi-chevron-down footer-chevron" [class.rotated]="userMenuOpen"></i>
+    </div>
+
+    <div class="footer-menu" *ngIf="userMenuOpen">
+      <a class="footer-menu-item" routerLink="/profil" (click)="onNavClick()">
+        <i class="bi bi-person"></i> Mon profil
+      </a>
+      <a class="footer-menu-item" routerLink="/parametres" (click)="onNavClick()">
+        <i class="bi bi-gear"></i> Paramètres
+      </a>
+      <button class="footer-menu-item danger" type="button">
+        <i class="bi bi-box-arrow-right"></i> Déconnexion
+      </button>
+    </div>
+  </div>
+</aside>
+
+<!-- fond assombri derrière la sidebar en mode mobile -->
+<div class="sidebar-backdrop" *ngIf="open" (click)="closeSidebar.emit()"></div>

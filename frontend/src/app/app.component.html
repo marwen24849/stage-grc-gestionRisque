@@ -1,0 +1,17 @@
+<ng-container *ngIf="!isLoginPage; else loginLayout">
+  <app-sidebar [open]="sidebarOpen" (closeSidebar)="sidebarOpen = false"></app-sidebar>
+
+  <div class="app-content" [class.sidebar-collapsed]="!sidebarOpen">
+    <app-topbar [title]="pageTitle" [notificationCount]="3" (menuToggle)="toggleSidebar()"></app-topbar>
+
+    <main class="app-main">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+
+  <app-ai-assistant></app-ai-assistant>
+</ng-container>
+
+<ng-template #loginLayout>
+  <router-outlet></router-outlet>
+</ng-template>

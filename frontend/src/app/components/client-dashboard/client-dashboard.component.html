@@ -1,0 +1,252 @@
+<!-- client-dashboard.component.html -->
+<div class="container-fluid vh-100 p-3 bg-light">
+
+  <!-- Row parent avec deux colonnes -->
+  <div class="row g-3 h-100">
+
+    <!-- ========== COLONNE GAUCHE (4/10) ========== -->
+    <div class="col-12 col-md-4 d-flex flex-column">
+
+      <div class="card shadow-sm rounded-3 h-100 d-flex flex-column overflow-hidden">
+
+        <!-- En-tête + recherche + bouton -->
+        <div class="card-header bg-white border-0 pt-3 pb-2">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="fw-bold text-dark mb-0">Clients</h5>
+            <span class="badge bg-light text-dark rounded-pill px-3 py-1">
+              {{ filteredClients.length }}
+            </span>
+          </div>
+
+          <!-- Recherche -->
+          <div class="input-group input-group-sm mb-2">
+            <span class="input-group-text bg-white border-end-0">
+              <i class="bi bi-search text-secondary"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control form-control-sm border-start-0 ps-0"
+              placeholder="Rechercher un client..."
+              [(ngModel)]="searchTerm"
+            />
+          </div>
+
+          <!-- Bouton Ajouter -->
+          <button
+            class="btn btn-primary btn-sm w-100 d-flex align-items-center justify-content-center gap-2"
+            (click)="startCreate()"
+          >
+            <i class="bi bi-plus-lg"></i> Ajouter un client
+          </button>
+        </div>
+
+        <!-- Liste scrollable -->
+        <div class="card-body p-2 overflow-auto flex-grow-1">
+
+          <div
+            *ngFor="let client of filteredClients"
+            (click)="selectClient(client)"
+            class="d-flex align-items-center p-2 rounded-2 cursor-pointer transition-all hover-bg-light"
+            [ngClass]="{
+              'bg-primary bg-opacity-10 border-start border-4 border-primary': selectedClient?.id === client.id && !isCreating,
+              'border-0': !(selectedClient?.id === client.id && !isCreating)
+            }"
+            style="cursor: pointer; transition: all 0.15s;"
+          >
+            <!-- Avatar -->
+            <div class="flex-shrink-0 me-2">
+              <span class="avatar-initials d-flex align-items-center justify-content-center text-white fw-semibold rounded-circle"
+                    style="width: 40px; height: 40px; background-color: #6c5ce7;">
+                {{ getInitials(client) }}
+              </span>
+            </div>
+            <div class="flex-grow-1 min-w-0">
+              <p class="fw-semibold text-dark mb-0 text-truncate">{{ client.nom }}</p>
+              <small class="text-muted text-truncate d-block">{{ client.email }}</small>
+            </div>
+          </div>
+
+          <div *ngIf="filteredClients.length === 0 && !loading" class="text-center text-muted py-4 small">
+            Aucun client trouvé
+          </div>
+          <div *ngIf="loading" class="text-center text-muted py-4 small">
+            Chargement...
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== COLONNE DROITE (6/10) ========== -->
+    <div class="col-12 col-md-8 d-flex flex-column">
+
+      <div class="card shadow-sm rounded-3 h-100 d-flex flex-column p-3 overflow-auto">
+
+        <!-- ---------- FORMULAIRE ---------- -->
+        <div *ngIf="isCreating || isEditing">
+
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold text-dark mb-0">
+              {{ isCreating ? 'Nouveau client' : 'Modifier le client' }}
+            </h5>
+            <button class="btn-close" (click)="cancelForm()"></button>
+          </div>
+
+          <form [formGroup]="clientForm" (ngSubmit)="submitForm()">
+
+            <div class="row g-3">
+
+              <!-- Nom -->
+              <div class="col-12">
+                <label class="form-label fw-medium">Nom complet</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="nom"
+                  [class.is-invalid]="clientForm.get('nom')?.invalid && clientForm.get('nom')?.touched"
+                  placeholder="Ex: Jean Dupont"
+                />
+                <div *ngIf="clientForm.get('nom')?.invalid && clientForm.get('nom')?.touched" class="invalid-feedback">
+                  Le nom est requis.
+                </div>
+              </div>
+
+              <!-- Email -->
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-medium">Email</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  formControlName="email"
+                  [class.is-invalid]="clientForm.get('email')?.invalid && clientForm.get('email')?.touched"
+                  placeholder="client@exemple.com"
+                />
+                <div *ngIf="clientForm.get('email')?.invalid && clientForm.get('email')?.touched" class="invalid-feedback">
+                  Email valide requis.
+                </div>
+              </div>
+
+              <!-- Téléphone -->
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-medium">Téléphone</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="telephone"
+                  placeholder="06 12 34 56 78"
+                />
+              </div>
+
+              <!-- Adresse -->
+              <div class="col-12">
+                <label class="form-label fw-medium">Adresse</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="adresse"
+                  placeholder="Paris, France"
+                />
+              </div>
+            </div>
+
+            <!-- Boutons -->
+            <div class="d-flex justify-content-end gap-2 mt-4">
+              <button type="button" class="btn btn-outline-secondary" (click)="cancelForm()">
+                Annuler
+              </button>
+              <button type="submit" class="btn btn-primary" [disabled]="clientForm.invalid">
+                {{ isCreating ? 'Enregistrer' : 'Mettre à jour' }}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ---------- FICHE DÉTAILLÉE ---------- -->
+        <div *ngIf="!isCreating && !isEditing && selectedClient">
+
+          <!-- En-tête + actions -->
+          <div class="d-flex flex-wrap align-items-start justify-content-between mb-3">
+            <div>
+              <h4 class="fw-bold text-dark mb-0">{{ selectedClient.nom }}</h4>
+              <span class="text-muted">{{ selectedClient.email }}</span>
+            </div>
+            <div class="d-flex gap-2 mt-2 mt-sm-0">
+              <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1" (click)="startEdit()">
+                <i class="bi bi-pencil"></i> Modifier
+              </button>
+              <button class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1" (click)="deleteClient()">
+                <i class="bi bi-trash3"></i> Supprimer
+              </button>
+              <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
+        [routerLink]="['/clients', selectedClient.id, 'responsables']">
+  <i class="bi bi-person-badge"></i> Responsables
+</button>
+            </div>
+          </div>
+
+          <!-- Grille d'informations -->
+          <div class="row g-3 bg-light p-3 rounded-3">
+            <div class="col-12 col-md-6 d-flex align-items-center gap-2">
+              <i class="bi bi-envelope fs-5 text-secondary"></i>
+              <div>
+                <small class="text-muted d-block">Email</small>
+                <span class="fw-medium">{{ selectedClient.email }}</span>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 d-flex align-items-center gap-2">
+              <i class="bi bi-telephone fs-5 text-secondary"></i>
+              <div>
+                <small class="text-muted d-block">Téléphone</small>
+                <span class="fw-medium">{{ selectedClient.telephone || 'Non renseigné' }}</span>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 d-flex align-items-center gap-2">
+              <i class="bi bi-building fs-5 text-secondary"></i>
+              <div>
+                <small class="text-muted d-block">Adresse</small>
+                <span class="fw-medium">{{ selectedClient.adresse || 'Non renseignée' }}</span>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 d-flex align-items-center gap-2">
+              <i class="bi bi-calendar3 fs-5 text-secondary"></i>
+              <div>
+                <small class="text-muted d-block">Date d'inscription</small>
+                <span class="fw-medium">{{ selectedClient.createdAt | date:'dd/MM/yyyy' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dernières interactions -->
+          <div class="mt-4">
+            <h6 class="fw-semibold text-secondary">Dernières interactions</h6>
+            <ul class="list-unstyled small">
+              <li class="d-flex align-items-center gap-2 py-1">
+                <span class="badge bg-primary rounded-circle p-1"></span>
+                Création le {{ selectedClient.createdAt | date:'dd/MM/yyyy' }}
+              </li>
+              <li *ngIf="selectedClient.updatedAt" class="d-flex align-items-center gap-2 py-1">
+                <span class="badge bg-primary rounded-circle p-1"></span>
+                Dernière mise à jour le {{ selectedClient.updatedAt | date:'dd/MM/yyyy' }}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- ---------- ÉTAT VIDE ---------- -->
+        <div *ngIf="!isCreating && !isEditing && !selectedClient && !loading" 
+             class="d-flex flex-column align-items-center justify-content-center h-100 text-muted">
+          <i class="bi bi-people fs-1"></i>
+          <p class="mt-2 fs-5 fw-light">Aucun client sélectionné</p>
+          <p class="small">Cliquez sur un client dans la liste ou ajoutez-en un.</p>
+        </div>
+
+        <!-- Chargement -->
+        <div *ngIf="loading" class="d-flex align-items-center justify-content-center h-100 text-muted">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
