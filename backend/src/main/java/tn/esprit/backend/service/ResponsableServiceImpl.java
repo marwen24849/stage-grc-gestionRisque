@@ -14,6 +14,7 @@ import tn.esprit.backend.exception.ResourceNotFoundException;
 import tn.esprit.backend.mapper.ResponsableMapper;
 import tn.esprit.backend.repository.ClientRepository;
 import tn.esprit.backend.repository.ResponsableRepository;
+import tn.esprit.backend.security.AuthorizationService;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class ResponsableServiceImpl implements ResponsableService {
     private final ResponsableRepository responsableRepository;
     private final ClientRepository clientRepository;
     private final ResponsableMapper responsableMapper;
+    private final AuthorizationService authorizationService;
 
     @Override
     @Tool(name = "createResponsable", description = "Crée un responsable pour un client donné.")
@@ -35,6 +37,7 @@ public class ResponsableServiceImpl implements ResponsableService {
 
         Client client = clientRepository.findById(dto.getClientId())
                 .orElseThrow(() -> new ResourceNotFoundException("Client non trouvé avec ID : " + dto.getClientId()));
+        authorizationService.assertClientAccess(client.getId());
 
         if (dto.getEmail() != null && responsableRepository.existsByEmail(dto.getEmail())) {
             throw new IllegalArgumentException("Un responsable avec cet email existe déjà.");
@@ -53,6 +56,7 @@ public class ResponsableServiceImpl implements ResponsableService {
         log.info("Mise à jour du responsable ID : {}", id);
         Responsable existing = responsableRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Responsable non trouvé avec ID : " + id));
+        authorizationService.assertClientAccess(existing.getClient().getId());
 
         // Vérification email
         if (dto.getEmail() != null && !dto.getEmail().equals(existing.getEmail()) &&
@@ -64,6 +68,7 @@ public class ResponsableServiceImpl implements ResponsableService {
         if (dto.getClientId() != null && !dto.getClientId().equals(existing.getClient().getId())) {
             Client client = clientRepository.findById(dto.getClientId())
                     .orElseThrow(() -> new ResourceNotFoundException("Client non trouvé avec ID : " + dto.getClientId()));
+                authorizationService.assertClientAccess(client.getId());
             existing.setClient(client);
         }
 
@@ -77,18 +82,22 @@ public class ResponsableServiceImpl implements ResponsableService {
     public ResponsableResponseDTO findById(Long id) {
         Responsable responsable = responsableRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Responsable non trouvé avec ID : " + id));
+        authorizationService.assertClientAccess(responsable.getClient().getId());
         return responsableMapper.toResponse(responsable);
     }
 
     @Override
     @Tool(name = "listResponsables", description = "Liste tous les responsables enregistrés dans la plateforme GRC.")
     public List<ResponsableResponseDTO> findAll() {
-        return responsableMapper.toResponseList(responsableRepository.findAll());
+        return responsableMapper.toResponseList(responsableRepository.findAll().stream()
+            .filter(responsable -> authorizationService.canAccessClient(responsable.getClient().getId()))
+            .toList());
     }
 
     @Override
     @Tool(name = "listResponsablesByClient", description = "Liste les responsables associés à un client donné.")
     public List<ResponsableResponseDTO> findByClient(Long clientId) {
+        authorizationService.assertClientAccess(clientId);
         if (!clientRepository.existsById(clientId)) {
             throw new ResourceNotFoundException("Client non trouvé avec ID : " + clientId);
         }
@@ -99,6 +108,9 @@ public class ResponsableServiceImpl implements ResponsableService {
     @Tool(name = "deleteResponsable", description = "Supprime un responsable de la plateforme GRC.")
     @Transactional
     public void delete(Long id) {
+        Responsable responsable = responsableRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Responsable non trouvé avec ID : " + id));
+        authorizationService.assertClientAccess(responsable.getClient().getId());
         if (!responsableRepository.existsById(id)) {
             throw new ResourceNotFoundException("Responsable non trouvé avec ID : " + id);
         }

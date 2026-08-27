@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import tn.esprit.backend.security.AuthorizationService;
 
 import java.util.List;
 import java.util.Map;
@@ -14,17 +16,24 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin
 public class ChatController {
 
     private final ChatClient chatClient;
     private final ToolDiscovery toolDiscovery;
+    private final AuthorizationService authorizationService;
 
     @GetMapping("/ai/chat")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONSULTANT', 'CLIENT')")
     public String chat(@RequestParam String message) {
         try {
+            var user = authorizationService.currentUser();
+            String clientScope = user.getClient() == null
+                ? "clients affectés uniquement via les autorisations du compte"
+                : "client associé ID " + user.getClient().getId();
             return this.chatClient.prompt()
-                    .system(SystemPrompts.SYSTEM_MESSAGE)
+                .system(SystemPrompts.SYSTEM_MESSAGE + "\nUtilisateur authentifié: rôle "
+                    + user.getRole() + ". Périmètre de données: " + clientScope
+                    + ". Ne divulgue aucune donnée hors de ce périmètre.")
                     .user(message)
                     .call()
                     .content();
@@ -35,6 +44,7 @@ public class ChatController {
     }
 
     @GetMapping("/ai/tools")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONSULTANT', 'CLIENT')")
     public List<Map<String, String>> listTools() {
         return toolDiscovery.getTools();
     }

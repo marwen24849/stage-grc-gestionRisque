@@ -25,9 +25,7 @@ public class Actif extends BaseEntity {
 
     private String type;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "niveau_id", nullable = false)
-    private NiveauClassification niveau;
+
 
     @Column(name = "disponibilite_level")
     private Integer disponibiliteLevel;
@@ -50,6 +48,22 @@ public class Actif extends BaseEntity {
     @Column(name = "actif_secondaire", length = 150)
     private String actifSecondaire;
 
+    private String documentsSousFormatPapier;
+
+    private String actifsDeTypeSupportsElectronique;
+
+    private String actifsDeTypeMateriel;
+
+    private String actifsDeTypeLogiciel;
+
+    private String actifsDeTypePersonnes;
+
+    private String actifsDeTypeServices;
+
+    private String actifsDeTypeLocaux;
+
+    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "activite_id", nullable = false)
     private Activite activite;
@@ -57,6 +71,14 @@ public class Actif extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Actif parent;
+
+
+
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "niveau_id", nullable = false)
+    private NiveauClassification niveau;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Actif> enfants = new ArrayList<>();

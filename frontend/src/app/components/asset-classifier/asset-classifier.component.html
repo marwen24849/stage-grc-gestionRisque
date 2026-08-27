@@ -10,6 +10,14 @@
   </div>
 
   <div class="classifier-body">
+    <div class="classification-guide mb-4" *ngIf="clientImageBase64">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <i class="bi bi-image text-primary"></i>
+        <span class="fw-semibold">Guide de classification</span>
+      </div>
+      <img [src]="clientImageBase64" alt="Guide visuel de classification" class="classification-guide-image" />
+    </div>
+
     <div class="field">
       <label>Disponibilité</label>
       <div class="level-selector">

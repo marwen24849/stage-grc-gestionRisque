@@ -6,7 +6,16 @@
   </button>
 </div>
 
-<div class="assistant-panel" *ngIf="isOpen" role="dialog" aria-label="Assistant IA GRC">
+<div class="assistant-backdrop" *ngIf="isOpen && isExpanded" (click)="toggleExpand()"></div>
+
+<div
+  class="assistant-panel"
+  [class.expanded]="isExpanded"
+  *ngIf="isOpen"
+  role="dialog"
+  aria-label="Assistant IA GRC"
+  [attr.aria-modal]="isExpanded ? 'true' : null"
+>
   <div class="assistant-header">
     <div class="assistant-title-wrap">
       <span class="assistant-header-badge"><i class="bi bi-stars"></i></span>
@@ -15,9 +24,20 @@
         <small>IA de supervision</small>
       </div>
     </div>
-    <button type="button" class="close-button" (click)="toggleAssistant()" aria-label="Fermer l'assistant">
-      <i class="bi bi-x-lg"></i>
-    </button>
+
+    <div class="assistant-header-actions">
+      <button
+        type="button"
+        class="expand-button"
+        (click)="toggleExpand()"
+        [attr.aria-label]="isExpanded ? 'Réduire l\'assistant' : 'Agrandir l\'assistant'"
+      >
+        <i class="bi" [ngClass]="isExpanded ? 'bi-fullscreen-exit' : 'bi-arrows-fullscreen'"></i>
+      </button>
+      <button type="button" class="close-button" (click)="toggleAssistant()" aria-label="Fermer l'assistant">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
   </div>
 
   <div class="assistant-body" #messagesContainer>

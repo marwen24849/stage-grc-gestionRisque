@@ -1,8 +1,4 @@
-/* ============================================================
-   login.component.css
-   Mêmes tokens que sidebar/topbar/actif-dashboard :
-   navy #052D59, primaire #0B62DD, canvas #F5F7FA, ink #1B202C.
-   ============================================================ */
+
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -41,9 +37,7 @@
   min-height: 100vh;
 }
 
-/* ============================================================
-   Panneau de marque (gauche)
-   ============================================================ */
+
 
 .login-branding {
   position: relative;
@@ -164,9 +158,7 @@
   margin: 0;
 }
 
-/* ============================================================
-   Panneau formulaire (droite)
-   ============================================================ */
+
 
 .login-form-panel {
   display: flex;
@@ -201,7 +193,7 @@
   color: var(--slate);
 }
 
-/* ---- Bandeau d'erreur ---- */
+
 
 .error-banner {
   display: flex;
@@ -220,7 +212,7 @@
   display: none;
 }
 
-/* ---- Champs ---- */
+
 
 .login-form {
   display: flex;
@@ -293,7 +285,7 @@
   color: var(--slate);
 }
 
-/* ---- Ligne options ---- */
+
 
 .form-row {
   display: flex;
@@ -329,7 +321,7 @@
   text-decoration: underline;
 }
 
-/* ---- Bouton de connexion ---- */
+
 
 .btn-login {
   display: flex;
@@ -381,9 +373,7 @@
   text-decoration: underline;
 }
 
-/* ============================================================
-   Responsive
-   ============================================================ */
+
 
 @media (max-width: 900px) {
   .login-page {

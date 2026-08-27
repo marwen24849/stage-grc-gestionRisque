@@ -1,15 +1,15 @@
-<!-- client-dashboard.component.html -->
+
 <div class="container-fluid vh-100 p-3 bg-light">
 
-  <!-- Row parent avec deux colonnes -->
+  
   <div class="row g-3 h-100">
 
-    <!-- ========== COLONNE GAUCHE (4/10) ========== -->
+    
     <div class="col-12 col-md-4 d-flex flex-column">
 
       <div class="card shadow-sm rounded-3 h-100 d-flex flex-column overflow-hidden">
 
-        <!-- En-tête + recherche + bouton -->
+        
         <div class="card-header bg-white border-0 pt-3 pb-2">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <h5 class="fw-bold text-dark mb-0">Clients</h5>
@@ -18,7 +18,7 @@
             </span>
           </div>
 
-          <!-- Recherche -->
+          
           <div class="input-group input-group-sm mb-2">
             <span class="input-group-text bg-white border-end-0">
               <i class="bi bi-search text-secondary"></i>
@@ -31,7 +31,7 @@
             />
           </div>
 
-          <!-- Bouton Ajouter -->
+          
           <button
             class="btn btn-primary btn-sm w-100 d-flex align-items-center justify-content-center gap-2"
             (click)="startCreate()"
@@ -40,7 +40,7 @@
           </button>
         </div>
 
-        <!-- Liste scrollable -->
+        
         <div class="card-body p-2 overflow-auto flex-grow-1">
 
           <div
@@ -53,7 +53,7 @@
             }"
             style="cursor: pointer; transition: all 0.15s;"
           >
-            <!-- Avatar -->
+            
             <div class="flex-shrink-0 me-2">
               <span class="avatar-initials d-flex align-items-center justify-content-center text-white fw-semibold rounded-circle"
                     style="width: 40px; height: 40px; background-color: #6c5ce7;">
@@ -77,12 +77,12 @@
       </div>
     </div>
 
-    <!-- ========== COLONNE DROITE (6/10) ========== -->
+    
     <div class="col-12 col-md-8 d-flex flex-column">
 
       <div class="card shadow-sm rounded-3 h-100 d-flex flex-column p-3 overflow-auto">
 
-        <!-- ---------- FORMULAIRE ---------- -->
+        
         <div *ngIf="isCreating || isEditing">
 
           <div class="d-flex justify-content-between align-items-center mb-3">
@@ -96,7 +96,7 @@
 
             <div class="row g-3">
 
-              <!-- Nom -->
+              
               <div class="col-12">
                 <label class="form-label fw-medium">Nom complet</label>
                 <input
@@ -111,7 +111,7 @@
                 </div>
               </div>
 
-              <!-- Email -->
+              
               <div class="col-12 col-md-6">
                 <label class="form-label fw-medium">Email</label>
                 <input
@@ -126,7 +126,7 @@
                 </div>
               </div>
 
-              <!-- Téléphone -->
+              
               <div class="col-12 col-md-6">
                 <label class="form-label fw-medium">Téléphone</label>
                 <input
@@ -137,7 +137,7 @@
                 />
               </div>
 
-              <!-- Adresse -->
+              
               <div class="col-12">
                 <label class="form-label fw-medium">Adresse</label>
                 <input
@@ -147,9 +147,29 @@
                   placeholder="Paris, France"
                 />
               </div>
+
+              <div class="col-12">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <label class="form-label fw-medium mb-0">Image de classification</label>
+                  <small class="text-muted">Une image pour guider la classification des actifs</small>
+                </div>
+                <div class="classification-image-upload border rounded-3 p-3 bg-light">
+                  <div *ngIf="clientForm.get('classificationImageBase64')?.value as image" class="position-relative mb-3">
+                    <img [src]="image" alt="Illustration de classification" class="classification-image-preview rounded-3" />
+                    <button type="button" class="btn btn-sm btn-light border position-absolute top-0 end-0 m-2" (click)="removeClassificationImage()" aria-label="Supprimer l'image">
+                      <i class="bi bi-trash3"></i>
+                    </button>
+                  </div>
+                  <label class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-2 mb-0">
+                    <i class="bi bi-image"></i>
+                    {{ clientForm.get('classificationImageBase64')?.value ? 'Remplacer l’image' : 'Ajouter une image' }}
+                    <input type="file" accept="image/*" class="d-none" (change)="onClassificationImageSelected($event)" />
+                  </label>
+                </div>
+              </div>
             </div>
 
-            <!-- Boutons -->
+            
             <div class="d-flex justify-content-end gap-2 mt-4">
               <button type="button" class="btn btn-outline-secondary" (click)="cancelForm()">
                 Annuler
@@ -161,10 +181,10 @@
           </form>
         </div>
 
-        <!-- ---------- FICHE DÉTAILLÉE ---------- -->
+        
         <div *ngIf="!isCreating && !isEditing && selectedClient">
 
-          <!-- En-tête + actions -->
+          
           <div class="d-flex flex-wrap align-items-start justify-content-between mb-3">
             <div>
               <h4 class="fw-bold text-dark mb-0">{{ selectedClient.nom }}</h4>
@@ -184,7 +204,7 @@
             </div>
           </div>
 
-          <!-- Grille d'informations -->
+          
           <div class="row g-3 bg-light p-3 rounded-3">
             <div class="col-12 col-md-6 d-flex align-items-center gap-2">
               <i class="bi bi-envelope fs-5 text-secondary"></i>
@@ -214,9 +234,13 @@
                 <span class="fw-medium">{{ selectedClient.createdAt | date:'dd/MM/yyyy' }}</span>
               </div>
             </div>
+            <div class="col-12" *ngIf="selectedClient.classificationImageBase64">
+              <small class="text-muted d-block mb-2">Image de classification</small>
+              <img [src]="selectedClient.classificationImageBase64" alt="Illustration de classification" class="classification-image-detail rounded-3" />
+            </div>
           </div>
 
-          <!-- Dernières interactions -->
+          
           <div class="mt-4">
             <h6 class="fw-semibold text-secondary">Dernières interactions</h6>
             <ul class="list-unstyled small">
@@ -232,7 +256,7 @@
           </div>
         </div>
 
-        <!-- ---------- ÉTAT VIDE ---------- -->
+        
         <div *ngIf="!isCreating && !isEditing && !selectedClient && !loading" 
              class="d-flex flex-column align-items-center justify-content-center h-100 text-muted">
           <i class="bi bi-people fs-1"></i>
@@ -240,7 +264,7 @@
           <p class="small">Cliquez sur un client dans la liste ou ajoutez-en un.</p>
         </div>
 
-        <!-- Chargement -->
+        
         <div *ngIf="loading" class="d-flex align-items-center justify-content-center h-100 text-muted">
           <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Chargement...</span>

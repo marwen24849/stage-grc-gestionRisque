@@ -10,6 +10,7 @@ import { ActifService } from '../../services/actif.service';
 })
 export class AssetClassifierComponent implements OnInit, OnChanges {
   @Input() assetId: number | null = null;
+  @Input() clientImageBase64: string | null | undefined = null;
   selectedNiveauId: number = 1;
   disponibiliteLevel: number = 3;
   integriteLevel: number = 3;

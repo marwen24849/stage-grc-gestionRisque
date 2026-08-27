@@ -1,6 +1,6 @@
-// src/app/models/activite.model.ts
 
-// Correspond à ActiviteResponseDTO (retourné par l'API)
+
+
 export interface Activite {
   id: number;
   nom: string;
@@ -11,7 +11,7 @@ export interface Activite {
   updatedAt: string;
 }
 
-// Correspond à ActiviteRequestDTO (envoyé à l'API pour create/update)
+
 export interface ActiviteCreate {
   nom: string;
   description: string;

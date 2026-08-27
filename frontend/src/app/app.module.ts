@@ -7,6 +7,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { ResponsableDashboardComponent } from './components/responsable-dashboard/responsable-dashboard.component';
 import { SidebarComponent } from './share/sidebar/sidebar.component';
 import { TopbarComponent } from './share/topbar/topbar.component';
@@ -20,6 +22,8 @@ import { LoginComponent } from './components/login/login.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { RegisterComponent } from './components/register/register.component';
 import { ContactAdminComponent } from './components/contact-admin/contact-admin.component';
+import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
+import { UserManagementComponent } from './components/user-management/user-management.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +40,9 @@ import { ContactAdminComponent } from './components/contact-admin/contact-admin.
     LoginComponent,
     ForgotPasswordComponent,
     RegisterComponent,
-    ContactAdminComponent
+    ContactAdminComponent,
+    AccessDeniedComponent,
+    UserManagementComponent
   ],
   imports: [
      BrowserModule,
@@ -44,10 +50,12 @@ import { ContactAdminComponent } from './components/contact-admin/contact-admin.
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    LucideAngularModule, // Ajout du module de base
+    LucideAngularModule, 
     HttpClientModule
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

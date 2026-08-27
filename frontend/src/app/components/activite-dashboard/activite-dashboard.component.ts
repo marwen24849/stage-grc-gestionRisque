@@ -89,7 +89,7 @@ export class ActiviteDashboardComponent implements OnInit {
     if (this.isCreating) {
       this.isCreating = false;
       if (this.selectedActivite) {
-        // on garde la sélection
+        
       } else if (this.activites.length > 0) {
         this.selectActivite(this.activites[0]);
       }
@@ -158,9 +158,9 @@ export class ActiviteDashboardComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/']);
-    // Remplacez par `this.location.back()` (Location de @angular/common)
-    // si vous préférez revenir exactement à la fiche du responsable
-    // précédemment consultée plutôt qu'à la racine.
+    
+    
+    
   }
 
   goToActfs(): void {

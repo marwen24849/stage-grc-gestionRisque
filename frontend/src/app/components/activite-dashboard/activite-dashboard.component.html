@@ -2,7 +2,7 @@
 
   <div class="row g-3 h-100">
 
-    <!-- ========== COLONNE GAUCHE ========== -->
+    
     <div class="col-12 col-md-4 d-flex flex-column">
 
       <div class="card shadow-sm rounded-3 h-100 d-flex flex-column overflow-hidden">
@@ -80,12 +80,12 @@
       </div>
     </div>
 
-    <!-- ========== COLONNE DROITE ========== -->
+    
     <div class="col-12 col-md-8 d-flex flex-column">
 
       <div class="card shadow-sm rounded-3 h-100 d-flex flex-column p-3 overflow-auto">
 
-        <!-- ---------- FORMULAIRE ---------- -->
+        
         <div *ngIf="isCreating || isEditing">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="fw-bold text-dark mb-0">
@@ -119,7 +119,7 @@
           </form>
         </div>
 
-        <!-- ---------- FICHE DÉTAILLÉE ---------- -->
+        
         <div *ngIf="!isCreating && !isEditing && selectedActivite">
           <div class="d-flex flex-wrap align-items-start justify-content-between mb-3">
             <div>
@@ -179,7 +179,7 @@
           </div>
         </div>
 
-        <!-- ---------- ÉTAT VIDE ---------- -->
+        
         <div *ngIf="!isCreating && !isEditing && !selectedActivite && !loading"
              class="d-flex flex-column align-items-center justify-content-center h-100 text-muted">
           <i class="bi bi-clipboard-check fs-1"></i>
@@ -187,7 +187,7 @@
           <p class="small">Cliquez sur une activité dans la liste ou ajoutez-en une.</p>
         </div>
 
-        <!-- Chargement -->
+        
         <div *ngIf="loading" class="d-flex align-items-center justify-content-center h-100 text-muted">
           <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Chargement...</span>

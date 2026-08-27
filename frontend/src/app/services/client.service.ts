@@ -1,4 +1,4 @@
-// src/app/services/client.service.ts
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
@@ -13,7 +13,7 @@ export class ClientService {
 
   constructor(private http: HttpClient) {}
 
-  // Charger tous les clients au démarrage
+  
   loadClients(): Observable<Client[]> {
     return this.http.get<Client[]>(this.apiUrl).pipe(
       tap(clients => this.clientsSubject.next(clients))
@@ -21,7 +21,7 @@ export class ClientService {
   }
 
   getClients(): Observable<Client[]> {
-    // Si déjà chargés, on retourne directement, sinon on charge
+    
     if (this.clientsSubject.value.length === 0) {
       return this.loadClients();
     }

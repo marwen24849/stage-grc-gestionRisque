@@ -1,5 +1,6 @@
-// topbar.component.ts
+
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-topbar',
@@ -8,14 +9,16 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrls: ['./topbar.component.css']
 })
 export class TopbarComponent {
-  // Titre de la page — à passer depuis chaque page, ex: <app-topbar title="Gestion des clients">
+  
   @Input() title = 'Tableau de bord';
   @Input() notificationCount = 0;
 
-  // Émis quand on clique sur le bouton hamburger (utile en mobile pour ouvrir la sidebar)
+  
   @Output() menuToggle = new EventEmitter<void>();
 
   userMenuOpen = false;
+
+  constructor(private readonly authService: AuthService) {}
 
   toggleUserMenu(): void {
     this.userMenuOpen = !this.userMenuOpen;
@@ -23,5 +26,9 @@ export class TopbarComponent {
 
   closeUserMenu(): void {
     this.userMenuOpen = false;
+  }
+
+  logout(): void {
+    this.authService.logout();
   }
 }

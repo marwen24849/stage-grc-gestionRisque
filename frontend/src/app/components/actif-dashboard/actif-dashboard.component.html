@@ -69,12 +69,12 @@
 
             <button
               type="button"
-              class="btn btn-sm btn-light border-0 rounded-circle d-flex align-items-center justify-content-center classifier-trigger"
+              class="btn btn-blanc  "
               (click)="toggleClassifier(actif, $event)"
               title="Classer l'actif"
               aria-label="Classer l'actif"
             >
-              <i class="bi bi-shield-check"></i>
+              classification 
             </button>
           </div>
 
@@ -112,26 +112,37 @@
                 <input type="text" class="form-control" formControlName="type" placeholder="Ex: Application, Document, Système" />
               </div>
 
-              <div class="col-12 col-md-6">
-                <label class="form-label fw-medium">Actif secondaire</label>
-                <input type="text" class="form-control" formControlName="actifSecondaire" placeholder="Ex: Document, Serveur, Base de données" />
+              <div class="col-12">
+                <h6 class="fw-semibold text-dark mb-0">Types d'actifs secondaires</h6>
               </div>
 
               <div class="col-12 col-md-6">
-                <label class="form-label fw-medium">Niveau de classification</label>
-                <select class="form-select" formControlName="niveauId">
-                  <option *ngFor="let niveau of niveaux" [value]="niveau.id">{{ niveau.label }}</option>
-                </select>
+                <label class="form-label fw-medium">Documents sous format papier</label>
+                <input type="text" class="form-control" formControlName="documentsSousFormatPapier" />
               </div>
-
               <div class="col-12 col-md-6">
-                <label class="form-label fw-medium">Actif parent</label>
-                <select class="form-select" formControlName="parentId">
-                  <option [ngValue]="null">Aucun parent</option>
-                  <option *ngFor="let actif of actifs" [ngValue]="actif.id" [hidden]="selectedActif && actif.id === selectedActif.id">
-                    {{ actif.nom }}
-                  </option>
-                </select>
+                <label class="form-label fw-medium">Supports électroniques</label>
+                <input type="text" class="form-control" formControlName="actifsDeTypeSupportsElectronique" />
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-medium">Matériel</label>
+                <input type="text" class="form-control" formControlName="actifsDeTypeMateriel" />
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-medium">Logiciel</label>
+                <input type="text" class="form-control" formControlName="actifsDeTypeLogiciel" />
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-medium">Personnes</label>
+                <input type="text" class="form-control" formControlName="actifsDeTypePersonnes" />
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-medium">Services</label>
+                <input type="text" class="form-control" formControlName="actifsDeTypeServices" />
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-medium">Locaux</label>
+                <input type="text" class="form-control" formControlName="actifsDeTypeLocaux" />
               </div>
 
               <div class="col-12">
@@ -180,7 +191,7 @@
         </div>
 
         <div *ngIf="!isCreating && !isEditing && selectedActif" class="dashboard-content-split" [class.has-classifier]="showClassifier">
-          <div class="details-panel">
+          <div class="details-panel" *ngIf="!showClassifier">
             <div class="d-flex flex-wrap align-items-start justify-content-between mb-3">
               <div>
                 <h4 class="fw-bold text-dark mb-0">{{ selectedActif.nom }}</h4>
@@ -205,25 +216,23 @@
                 </div>
               </div>
               <div class="col-12 col-md-6 d-flex align-items-center gap-2">
-                <i class="bi bi-shield-lock fs-5 text-secondary"></i>
-                <div>
-                  <small class="text-muted d-block">Classification</small>
-                  <span class="fw-medium">Niveau {{ selectedActif.niveau?.niveau || 'N/A' }}</span>
-                </div>
-              </div>
-              <div class="col-12 col-md-6 d-flex align-items-center gap-2">
                 <i class="bi bi-currency-bitcoin fs-5 text-secondary"></i>
                 <div>
                   <small class="text-muted d-block">Valeur</small>
                   <span class="fw-medium">{{ selectedActif.valeur ?? 'N/A' }}</span>
                 </div>
               </div>
-              <div class="col-12 col-md-6 d-flex align-items-center gap-2">
-                <i class="bi bi-diagram-3 fs-5 text-secondary"></i>
-                <div>
-                  <small class="text-muted d-block">Actif secondaire</small>
-                  <span class="fw-medium">{{ selectedActif.actifSecondaire || 'Non renseigné' }}</span>
-                </div>
+              <div class="col-12">
+                <i class="bi bi-collection fs-5 text-secondary me-2"></i>
+                <small class="text-muted d-block">Types secondaires</small>
+                <div class="fw-medium" *ngIf="selectedActif.documentsSousFormatPapier">Documents sous format papier: {{ selectedActif.documentsSousFormatPapier }}</div>
+                <div class="fw-medium" *ngIf="selectedActif.actifsDeTypeSupportsElectronique">Supports électroniques: {{ selectedActif.actifsDeTypeSupportsElectronique }}</div>
+                <div class="fw-medium" *ngIf="selectedActif.actifsDeTypeMateriel">Matériel: {{ selectedActif.actifsDeTypeMateriel }}</div>
+                <div class="fw-medium" *ngIf="selectedActif.actifsDeTypeLogiciel">Logiciel: {{ selectedActif.actifsDeTypeLogiciel }}</div>
+                <div class="fw-medium" *ngIf="selectedActif.actifsDeTypePersonnes">Personnes: {{ selectedActif.actifsDeTypePersonnes }}</div>
+                <div class="fw-medium" *ngIf="selectedActif.actifsDeTypeServices">Services: {{ selectedActif.actifsDeTypeServices }}</div>
+                <div class="fw-medium" *ngIf="selectedActif.actifsDeTypeLocaux">Locaux: {{ selectedActif.actifsDeTypeLocaux }}</div>
+                <span class="fw-medium" *ngIf="!selectedActif.documentsSousFormatPapier && !selectedActif.actifsDeTypeSupportsElectronique && !selectedActif.actifsDeTypeMateriel && !selectedActif.actifsDeTypeLogiciel && !selectedActif.actifsDeTypePersonnes && !selectedActif.actifsDeTypeServices && !selectedActif.actifsDeTypeLocaux">Non renseignés</span>
               </div>
               <div class="col-12 col-md-6 d-flex align-items-center gap-2">
                 <i class="bi bi-calendar3 fs-5 text-secondary"></i>
@@ -243,15 +252,7 @@
                 </li>
                 <li class="d-flex align-items-center gap-2 py-1">
                   <span class="badge bg-primary rounded-circle p-1"></span>
-                  Niveau de classification : {{ selectedActif.niveau?.niveau || 'N/A' }}
-                </li>
-                <li class="d-flex align-items-center gap-2 py-1">
-                  <span class="badge bg-primary rounded-circle p-1"></span>
                   Niveau max : {{ selectedActif.niveauMax ?? 'N/A' }}
-                </li>
-                <li class="d-flex align-items-center gap-2 py-1">
-                  <span class="badge bg-primary rounded-circle p-1"></span>
-                  Parent : {{ selectedActif.parentId ? 'Actif #' + selectedActif.parentId : 'Aucun parent' }}
                 </li>
                 <li *ngIf="selectedActif.updatedAt" class="d-flex align-items-center gap-2 py-1">
                   <span class="badge bg-primary rounded-circle p-1"></span>
@@ -261,6 +262,29 @@
             </div>
           </div>
 
+          <div class="classification-image-panel" *ngIf="showClassifier">
+            <div class="classification-image-heading">
+              <div>
+                <span class="classification-image-kicker">Support visuel</span>
+                <h4 class="fw-bold text-dark mb-1">Guide de classification</h4>
+                <p class="text-muted mb-0">Référez-vous à l'image ajoutée depuis le client.</p>
+              </div>
+              <i class="bi bi-image classification-image-icon"></i>
+            </div>
+            <img
+              *ngIf="selectedActif.activite?.clientImageBase64; else noClientImage"
+              [src]="selectedActif.activite?.clientImageBase64"
+              alt="Guide de classification du client"
+              class="classification-image-main"
+            />
+            <ng-template #noClientImage>
+              <div class="classification-image-empty">
+                <i class="bi bi-image-alt"></i>
+                <span>Aucune image de classification n'est renseignée pour ce client.</span>
+              </div>
+            </ng-template>
+          </div>
+
           <div class="classifier-panel" *ngIf="showClassifier">
             <div class="classifier-header-inline d-flex justify-content-between align-items-center mb-2">
               <span class="fw-semibold text-dark">Classification</span>
@@ -268,7 +292,10 @@
                 <i class="bi bi-x-lg"></i>
               </button>
             </div>
-            <app-asset-classifier [assetId]="selectedActif.id"></app-asset-classifier>
+            <app-asset-classifier
+              [assetId]="selectedActif.id"
+              [clientImageBase64]="selectedActif.activite?.clientImageBase64"
+            ></app-asset-classifier>
           </div>
         </div>
 

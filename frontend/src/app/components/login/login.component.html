@@ -1,6 +1,6 @@
 <div class="login-page">
 
-  <!-- ============ Panneau de marque (gauche) ============ -->
+  
   <aside class="login-branding">
     <div class="branding-decor" aria-hidden="true"></div>
 
@@ -36,7 +36,7 @@
     <p class="branding-footer">© 2026 GRC. Tous droits réservés.</p>
   </aside>
 
-  <!-- ============ Panneau formulaire (droite) ============ -->
+  
   <main class="login-form-panel">
     <div class="login-card">
 
@@ -48,13 +48,13 @@
       <h1 class="login-title">Connexion</h1>
       <p class="login-subtitle">Accédez à votre espace consultant</p>
 
-      <!-- Bandeau d'erreur — masqué par défaut, à afficher en cas d'échec d'authentification -->
-      <div class="error-banner" hidden>
+      
+      <div class="error-banner" *ngIf="errorMessage">
         <i class="bi bi-exclamation-circle"></i>
-        <span>Email ou mot de passe incorrect.</span>
+        <span>{{ errorMessage }}</span>
       </div>
 
-      <form class="login-form">
+      <form class="login-form" (ngSubmit)="onSubmit()" #loginForm="ngForm" novalidate>
         <div class="form-field">
           <label for="email">Email professionnel</label>
           <div class="input-wrap">
@@ -63,6 +63,7 @@
               type="email"
               id="email"
               name="email"
+              [(ngModel)]="email"
               placeholder="vous@entreprise.com"
               autocomplete="email"
               required
@@ -78,11 +79,13 @@
               type="password"
               id="password"
               name="password"
+              [(ngModel)]="password"
+              [type]="showPassword ? 'text' : 'password'"
               placeholder="••••••••"
               autocomplete="current-password"
               required
             />
-            <button type="button" class="toggle-password" aria-label="Afficher le mot de passe">
+            <button type="button" class="toggle-password" (click)="showPassword = !showPassword" [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">
               <i class="bi bi-eye"></i>
             </button>
           </div>
@@ -96,8 +99,8 @@
           <a routerLink="/forgot-password" class="forgot-link">Mot de passe oublié ?</a>
         </div>
 
-        <button type="submit" class="btn-login" routerLink="/dashboard">
-          Se connecter
+        <button type="submit" class="btn-login" [disabled]="isSubmitting || loginForm.invalid">
+          {{ isSubmitting ? 'Connexion...' : 'Se connecter' }}
           <i class="bi bi-arrow-right"></i>
         </button>
       </form>
@@ -112,13 +115,3 @@
 
 </div>
 
-<script>
-  document.querySelectorAll('.toggle-password').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const input = btn.previousElementSibling;
-      const isPassword = input.type === 'password';
-      input.type = isPassword ? 'text' : 'password';
-      btn.querySelector('i').className = isPassword ? 'bi bi-eye-slash' : 'bi bi-eye';
-    });
-  });
-</script>

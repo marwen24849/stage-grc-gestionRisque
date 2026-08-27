@@ -1,0 +1,13 @@
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# Build output
+backend/target/
+frontend/dist/
+frontend/.angular/
+
+# IDE
+.idea/
+.vscode/*.log

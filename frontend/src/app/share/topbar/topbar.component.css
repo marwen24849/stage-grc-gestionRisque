@@ -1,6 +1,4 @@
-/* ============================================================
-   topbar.component.css
-   ============================================================ */
+
 
 :host {
   --ink: #1B202C;
@@ -63,7 +61,7 @@
   gap: 8px;
 }
 
-/* ---- Notifications ---- */
+
 
 .icon-btn {
   position: relative;
@@ -103,7 +101,7 @@
   border: 2px solid #FFFFFF;
 }
 
-/* ---- Menu utilisateur ---- */
+
 
 .user-menu {
   position: relative;
@@ -190,9 +188,7 @@
   color: var(--danger);
 }
 
-/* ============================================================
-   Responsive
-   ============================================================ */
+
 
 @media (max-width: 575.98px) {
   .page-title {

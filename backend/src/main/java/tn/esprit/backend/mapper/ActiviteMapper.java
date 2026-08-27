@@ -20,6 +20,8 @@ public interface ActiviteMapper {
 
     @Mapping(source = "responsable.id", target = "responsableId")
     @Mapping(source = "responsable.nom", target = "responsableNom")
+    @Mapping(source = "responsable.client.id", target = "clientId")
+    @Mapping(source = "responsable.client.classificationImageBase64", target = "clientImageBase64")
     ActiviteResponseDTO toResponse(Activite entity);
 
     List<ActiviteResponseDTO> toResponseList(List<Activite> entities);

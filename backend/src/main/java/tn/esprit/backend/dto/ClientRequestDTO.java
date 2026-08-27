@@ -17,4 +17,5 @@ public class ClientRequestDTO {
 
     private String adresse;
     private String telephone;
+    private String classificationImageBase64;
 }

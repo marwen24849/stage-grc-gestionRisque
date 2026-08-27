@@ -13,6 +13,7 @@ import tn.esprit.backend.exception.ResourceNotFoundException;
 import tn.esprit.backend.mapper.ActiviteMapper;
 import tn.esprit.backend.repository.ActiviteRepository;
 import tn.esprit.backend.repository.ResponsableRepository;
+import tn.esprit.backend.security.AuthorizationService;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class ActiviteServiceImpl implements ActiviteService {
     private final ActiviteRepository activiteRepository;
     private final ResponsableRepository responsableRepository;
     private final ActiviteMapper activiteMapper;
+    private final AuthorizationService authorizationService;
 
     @Override
     @Tool(name = "createActivite", description = "Crée une activité pour un responsable GRC.")
@@ -35,6 +37,7 @@ public class ActiviteServiceImpl implements ActiviteService {
 
         Responsable responsable = responsableRepository.findById(dto.getResponsableId())
                 .orElseThrow(() -> new ResourceNotFoundException("Responsable non trouvé avec ID : " + dto.getResponsableId()));
+        authorizationService.assertClientAccess(responsable.getClient().getId());
 
         // Empêcher un doublon de nom pour le même responsable
         if (activiteRepository.existsByNomIgnoreCaseAndResponsableId(dto.getNom(), responsable.getId())) {
@@ -54,6 +57,7 @@ public class ActiviteServiceImpl implements ActiviteService {
         log.info("Mise à jour de l'activité ID : {}", id);
         Activite existing = activiteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Activité non trouvée avec ID : " + id));
+        authorizationService.assertClientAccess(existing.getResponsable().getClient().getId());
 
         // Vérification de doublon de nom si le nom change ou si le responsable change
         if (dto.getNom() != null && !dto.getNom().equalsIgnoreCase(existing.getNom())) {
@@ -67,6 +71,7 @@ public class ActiviteServiceImpl implements ActiviteService {
         if (dto.getResponsableId() != null && !dto.getResponsableId().equals(existing.getResponsable().getId())) {
             Responsable responsable = responsableRepository.findById(dto.getResponsableId())
                     .orElseThrow(() -> new ResourceNotFoundException("Responsable non trouvé avec ID : " + dto.getResponsableId()));
+                authorizationService.assertClientAccess(responsable.getClient().getId());
             existing.setResponsable(responsable);
         }
 
@@ -80,18 +85,24 @@ public class ActiviteServiceImpl implements ActiviteService {
     public ActiviteResponseDTO findById(Long id) {
         Activite activite = activiteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Activité non trouvée avec ID : " + id));
+        authorizationService.assertClientAccess(activite.getResponsable().getClient().getId());
         return activiteMapper.toResponse(activite);
     }
 
     @Override
     @Tool(name = "listActivites", description = "Liste toutes les activités de la plateforme GRC.")
     public List <ActiviteResponseDTO> findAll() {
-        return activiteMapper.toResponseList(activiteRepository.findAll());
+        return activiteMapper.toResponseList(activiteRepository.findAll().stream()
+            .filter(activite -> authorizationService.canAccessClient(activite.getResponsable().getClient().getId()))
+            .toList());
     }
 
     @Override
     @Tool(name = "listActivitesByResponsable", description = "Liste les activités associées à un responsable donné.")
     public List<ActiviteResponseDTO> findByResponsable(Long responsableId) {
+        Responsable responsable = responsableRepository.findById(responsableId)
+            .orElseThrow(() -> new ResourceNotFoundException("Responsable non trouvé avec ID : " + responsableId));
+        authorizationService.assertClientAccess(responsable.getClient().getId());
         if (!responsableRepository.existsById(responsableId)) {
             throw new ResourceNotFoundException("Responsable non trouvé avec ID : " + responsableId);
         }
@@ -102,6 +113,9 @@ public class ActiviteServiceImpl implements ActiviteService {
     @Tool(name = "deleteActivite", description = "Supprime une activité existante.")
     @Transactional
     public void delete(Long id) {
+        Activite activite = activiteRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Activité non trouvée avec ID : " + id));
+        authorizationService.assertClientAccess(activite.getResponsable().getClient().getId());
         if (!activiteRepository.existsById(id)) {
             throw new ResourceNotFoundException("Activité non trouvée avec ID : " + id);
         }

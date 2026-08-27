@@ -1,4 +1,4 @@
-// client-dashboard.component.ts
+
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -7,7 +7,7 @@ import { Client } from '../../models/client.model';
 
 @Component({
   selector: 'app-client-dashboard',
-  standalone: false, // si vous utilisez un module, mettez false
+  standalone: false, 
   templateUrl: './client-dashboard.component.html',
   styleUrls: ['./client-dashboard.component.css']
 })
@@ -52,7 +52,30 @@ export class ClientDashboardComponent implements OnInit {
       email: [client?.email || '', [Validators.required, Validators.email]],
       telephone: [client?.telephone || ''],
       adresse: [client?.adresse || ''],
+      classificationImageBase64: [client?.classificationImageBase64 || ''],
     });
+  }
+
+  onClassificationImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      input.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.clientForm.get('classificationImageBase64')?.setValue(reader.result as string);
+      this.cdr.detectChanges();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removeClassificationImage(): void {
+    this.clientForm.get('classificationImageBase64')?.setValue('');
   }
 
   selectClient(client: Client): void {
@@ -84,7 +107,7 @@ export class ClientDashboardComponent implements OnInit {
     if (this.isCreating) {
       this.isCreating = false;
       if (this.selectedClient) {
-        // on garde la sélection
+        
       } else if (this.clients.length > 0) {
         this.selectClient(this.clients[0]);
       }

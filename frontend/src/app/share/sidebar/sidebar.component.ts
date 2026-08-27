@@ -1,5 +1,6 @@
-// sidebar.component.ts
+
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { AuthService } from '../../services/auth.service';
 
 interface NavItem {
   label: string;
@@ -14,7 +15,7 @@ interface NavItem {
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent {
-  // Contrôle l'affichage en overlay mobile (piloté par le topbar/parent)
+  
   @Input() open = false;
   @Output() closeSidebar = new EventEmitter<void>();
 
@@ -31,13 +32,19 @@ export class SidebarComponent {
 
   userMenuOpen = false;
 
+  constructor(private readonly authService: AuthService) {}
+
   toggleUserMenu(): void {
     this.userMenuOpen = !this.userMenuOpen;
   }
 
   onNavClick(): void {
     this.userMenuOpen = false;
-    // referme le menu mobile après un clic sur un lien
+    
     this.closeSidebar.emit();
+  }
+
+  logout(): void {
+    this.authService.logout();
   }
 }

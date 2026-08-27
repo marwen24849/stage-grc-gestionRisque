@@ -10,6 +10,10 @@ import { LoginComponent } from './components/login/login.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { RegisterComponent } from './components/register/register.component';
 import { ContactAdminComponent } from './components/contact-admin/contact-admin.component';
+import { authGuard } from './guards/auth.guard';
+import { roleGuard } from './guards/role.guard';
+import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
+import { UserManagementComponent } from './components/user-management/user-management.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -17,14 +21,16 @@ const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'contact-admin', component: ContactAdminComponent },
-  { path: 'clients', component: ClientDashboardComponent },
-  { path: 'clients/:clientId/responsables', component: ResponsableDashboardComponent },
-  { path: 'responsables', component: ResponsableDashboardComponent },
-  { path: 'activites/:responsableId', component: ActiviteDashboardComponent },
-  { path: 'activites/:activiteId/actifs', component: ActifDashboardComponent },
-  { path: 'actifs', component: ActifDashboardComponent },
-  { path: 'classify/:assetId', component: AssetClassifierComponent },
-  { path: 'dashboard', component: DashboardComponent },
+  { path: 'access-denied', component: AccessDeniedComponent },
+  { path: 'utilisateurs', component: UserManagementComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN'] } },
+  { path: 'clients', component: ClientDashboardComponent, canActivate: [authGuard] },
+  { path: 'clients/:clientId/responsables', component: ResponsableDashboardComponent, canActivate: [authGuard] },
+  { path: 'responsables', component: ResponsableDashboardComponent, canActivate: [authGuard] },
+  { path: 'activites/:responsableId', component: ActiviteDashboardComponent, canActivate: [authGuard] },
+  { path: 'activites/:activiteId/actifs', component: ActifDashboardComponent, canActivate: [authGuard] },
+  { path: 'actifs', component: ActifDashboardComponent, canActivate: [authGuard] },
+  { path: 'classify/:assetId', component: AssetClassifierComponent, canActivate: [authGuard] },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN', 'CONSULTANT', 'CLIENT'] } },
 ];
 
 @NgModule({

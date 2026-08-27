@@ -3,10 +3,15 @@ package tn.esprit.backend.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import tn.esprit.backend.entity.Role;
 import tn.esprit.backend.entity.NiveauClassification;
+import tn.esprit.backend.entity.User;
 import tn.esprit.backend.repository.NiveauClassificationRepository;
+import tn.esprit.backend.repository.UserRepository;
 
 import java.util.List;
 
@@ -16,6 +21,14 @@ import java.util.List;
 public class DataInitializer implements CommandLineRunner {
 
     private final NiveauClassificationRepository niveauRepository;
+        private final UserRepository userRepository;
+        private final PasswordEncoder passwordEncoder;
+
+        @Value("${app.admin.email:}")
+        private String adminEmail;
+
+        @Value("${app.admin.password:}")
+        private String adminPassword;
 
     @Override
     public void run(String... args) {
@@ -54,7 +67,40 @@ public class DataInitializer implements CommandLineRunner {
         } else {
             log.info("Les niveaux de classification existent déjà.");
         }
+
+                initializeAdmin();
     }
+
+        private void initializeAdmin() {
+                if (adminEmail == null || adminEmail.isBlank() || adminPassword == null || adminPassword.isBlank()) {
+                        log.warn("ADMIN_EMAIL et ADMIN_PASSWORD ne sont pas définis; aucun compte admin initial ne sera créé.");
+                        return;
+                }
+                if (userRepository.existsByEmailIgnoreCase(adminEmail)) {
+                        return;
+                }
+                if (!isStrongEnough(adminPassword)) {
+                        throw new IllegalStateException("ADMIN_PASSWORD must contain at least 8 characters, upper/lower case, a digit and a special character");
+                }
+
+                User admin = new User();
+                admin.setFirstName("GRC");
+                admin.setLastName("Administrator");
+                admin.setEmail(adminEmail.trim().toLowerCase());
+                admin.setPasswordHash(passwordEncoder.encode(adminPassword));
+                admin.setRole(Role.ADMIN);
+                admin.setEnabled(true);
+                userRepository.save(admin);
+                log.info("Compte admin initial créé pour {}", admin.getEmail());
+        }
+
+        private boolean isStrongEnough(String password) {
+                return password.length() >= 8
+                                && password.matches(".*[A-Z].*")
+                                && password.matches(".*[a-z].*")
+                                && password.matches(".*\\d.*")
+                                && password.matches(".*[^A-Za-z0-9].*");
+        }
 
     private NiveauClassification createNiveau(Integer niveau, String disponibilite, String integrite,
                                               String confidentialite, String tracabilite) {

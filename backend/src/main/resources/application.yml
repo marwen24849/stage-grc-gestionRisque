@@ -5,7 +5,7 @@ spring:
   application:
     name: backend
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://127.0.0.1:3307/risque2?createDatabaseIfNotExist=true}
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3307/risque2?createDatabaseIfNotExist=true}
     username: ${SPRING_DATASOURCE_USERNAME:root}
     password: ${SPRING_DATASOURCE_PASSWORD:password}
   jpa:
@@ -18,15 +18,21 @@ spring:
         format_sql: true
   ai:
     openai:
-      api-key: ${OPENROUTER_API_KEY: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}
+      api-key: ${OPENROUTER_API_KEY:}
       base-url: https://openrouter.ai/api/v1
       chat:
         model: nvidia/nemotron-3.5-lightning:free
 
 jwt:
-  secret: ${JWT_SECRET:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
-  access-token-expiration-ms: ${JWT_ACCESS_EXPIRATION_MS:3600000}
-  refresh-token-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000}
+  secret: ${KEY_SECRET:28e65c6afd4f3e61b9689a52ba0d8eb2528a0121686378028494a76f90900687}
+  expiration-ms: ${JWT_EXPIRATION:86400000}
+
+app:
+  cors:
+    origin: ${APP_CORS_ORIGIN:http://localhost:4200}
+  admin:
+    email: ${ADMIN_EMAIL:admin@gmail.com}
+    password: ${ADMIN_PASSWORD:A8jlqb6qm0m;}
 
 springdoc:
   api-docs:

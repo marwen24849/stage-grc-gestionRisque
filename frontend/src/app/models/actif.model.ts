@@ -1,4 +1,4 @@
-// src/app/models/actif.model.ts
+
 
 export interface NiveauClassification {
   id: number;
@@ -15,6 +15,8 @@ export interface ActiviteReference {
   description?: string;
   responsableId?: number;
   responsableNom?: string;
+  clientId?: number;
+  clientImageBase64?: string;
 }
 
 export interface Actif {
@@ -35,6 +37,13 @@ export interface Actif {
   niveauMax?: number;
   valeur?: number;
   actifSecondaire?: string;
+  documentsSousFormatPapier?: string;
+  actifsDeTypeSupportsElectronique?: string;
+  actifsDeTypeMateriel?: string;
+  actifsDeTypeLogiciel?: string;
+  actifsDeTypePersonnes?: string;
+  actifsDeTypeServices?: string;
+  actifsDeTypeLocaux?: string;
 }
 
 export interface ActifCreate {
@@ -51,4 +60,11 @@ export interface ActifCreate {
   niveauMax?: number;
   valeur?: number;
   actifSecondaire?: string;
+  documentsSousFormatPapier?: string;
+  actifsDeTypeSupportsElectronique?: string;
+  actifsDeTypeMateriel?: string;
+  actifsDeTypeLogiciel?: string;
+  actifsDeTypePersonnes?: string;
+  actifsDeTypeServices?: string;
+  actifsDeTypeLocaux?: string;
 }

@@ -17,6 +17,7 @@ import tn.esprit.backend.mapper.ActifMapper;
 import tn.esprit.backend.repository.ActifRepository;
 import tn.esprit.backend.repository.ActiviteRepository;
 import tn.esprit.backend.repository.NiveauClassificationRepository;
+import tn.esprit.backend.security.AuthorizationService;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -32,6 +33,7 @@ public class ActifServiceImpl implements ActifService {
     private final ActiviteRepository activiteRepository;
     private final NiveauClassificationRepository niveauRepository;
     private final ActifMapper actifMapper;
+    private final AuthorizationService authorizationService;
 
     @Override
     @Tool(name = "createActif", description = "Crée un actif associé à une activité et à un niveau de classification.")
@@ -39,15 +41,15 @@ public class ActifServiceImpl implements ActifService {
     public ActifResponseDTO create(ActifRequestDTO dto) {
         log.info("Création d'un actif pour l'activité ID : {}", dto.getActiviteId());
 
-        // Vérifier l'activité
+
         Activite activite = activiteRepository.findById(dto.getActiviteId())
                 .orElseThrow(() -> new ResourceNotFoundException("Activité non trouvée avec ID : " + dto.getActiviteId()));
+        authorizationService.assertClientAccess(activite.getResponsable().getClient().getId());
 
-        // Vérifier le niveau
+
         NiveauClassification niveau = niveauRepository.findById(dto.getNiveauId())
                 .orElseThrow(() -> new ResourceNotFoundException("Niveau de classification non trouvé avec ID : " + dto.getNiveauId()));
 
-        // Vérifier le parent (si existe)
         Actif parent = null;
         if (dto.getParentId() != null) {
             parent = actifRepository.findById(dto.getParentId())
@@ -58,7 +60,6 @@ public class ActifServiceImpl implements ActifService {
             }
         }
 
-        // Mapping DTO -> Entity (sans les relations)
         Actif actif = actifMapper.toEntity(dto);
         // Injection des relations
         actif.setActivite(activite);
@@ -66,7 +67,6 @@ public class ActifServiceImpl implements ActifService {
         actif.setParent(parent);
         applyDerivedClassification(actif);
 
-        // Persistance
         Actif saved = actifRepository.save(actif);
         log.info("Actif créé avec ID : {}", saved.getId());
 
@@ -81,11 +81,10 @@ public class ActifServiceImpl implements ActifService {
 
         Actif existing = actifRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Actif non trouvé avec ID : " + id));
+        authorizationService.assertClientAccess(existing.getActivite().getResponsable().getClient().getId());
 
-        // Mise à jour des champs simples
         actifMapper.updateEntity(dto, existing);
 
-        // Mise à jour des relations si fournies
         if (dto.getNiveauId() != null) {
             NiveauClassification niveau = niveauRepository.findById(dto.getNiveauId())
                     .orElseThrow(() -> new ResourceNotFoundException("Niveau non trouvé"));
@@ -95,12 +94,16 @@ public class ActifServiceImpl implements ActifService {
         if (dto.getActiviteId() != null) {
             Activite activite = activiteRepository.findById(dto.getActiviteId())
                     .orElseThrow(() -> new ResourceNotFoundException("Activité non trouvée"));
+                authorizationService.assertClientAccess(activite.getResponsable().getClient().getId());
             existing.setActivite(activite);
         }
 
         if (dto.getParentId() != null) {
             Actif parent = actifRepository.findById(dto.getParentId())
                     .orElseThrow(() -> new ResourceNotFoundException("Parent non trouvé"));
+            if (!parent.getActivite().getId().equals(existing.getActivite().getId())) {
+                throw new IllegalArgumentException("L'actif parent doit appartenir à la même activité");
+            }
             existing.setParent(parent);
         } else if (dto.getParentId() == null && dto.getId() != null) {
             // Si on envoie null explicitement, on supprime le parent (actif devient racine)
@@ -118,13 +121,16 @@ public class ActifServiceImpl implements ActifService {
     public ActifResponseDTO findById(Long id) {
         Actif actif = actifRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Actif non trouvé avec ID : " + id));
+        authorizationService.assertClientAccess(actif.getActivite().getResponsable().getClient().getId());
         return actifMapper.toResponse(actif);
     }
 
     @Override
     @Tool(name = "listActifsByActivite", description = "Liste les actifs liés à une activité donnée.")
     public List<ActifResponseDTO> findAllByActivite(Long activiteId) {
-        // On vérifie que l'activité existe (bonus)
+        Activite activite = activiteRepository.findById(activiteId)
+            .orElseThrow(() -> new ResourceNotFoundException("Activité non trouvée avec ID : " + activiteId));
+        authorizationService.assertClientAccess(activite.getResponsable().getClient().getId());
         if (!activiteRepository.existsById(activiteId)) {
             throw new ResourceNotFoundException("Activité non trouvée avec ID : " + activiteId);
         }
@@ -135,6 +141,9 @@ public class ActifServiceImpl implements ActifService {
     @Override
     @Tool(name = "listRootActifs", description = "Liste les actifs racines d'une activité.")
     public List<ActifResponseDTO> findRootsByActivite(Long activiteId) {
+        Activite activite = activiteRepository.findById(activiteId)
+            .orElseThrow(() -> new ResourceNotFoundException("Activité non trouvée avec ID : " + activiteId));
+        authorizationService.assertClientAccess(activite.getResponsable().getClient().getId());
         if (!activiteRepository.existsById(activiteId)) {
             throw new ResourceNotFoundException("Activité non trouvée avec ID : " + activiteId);
         }
@@ -145,9 +154,9 @@ public class ActifServiceImpl implements ActifService {
     @Override
     @Tool(name = "listChildrenActifs", description = "Liste les sous-actifs enfants d'un actif parent.")
     public List<ActifResponseDTO> findChildren(Long parentId) {
-        if (!actifRepository.existsById(parentId)) {
-            throw new ResourceNotFoundException("Parent non trouvé avec ID : " + parentId);
-        }
+        Actif parent = actifRepository.findById(parentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Parent non trouvé avec ID : " + parentId));
+        authorizationService.assertClientAccess(parent.getActivite().getResponsable().getClient().getId());
         List<Actif> children = actifRepository.findByParentId(parentId);
         return actifMapper.toResponseList(children);
     }
@@ -156,6 +165,9 @@ public class ActifServiceImpl implements ActifService {
     @Tool(name = "deleteActif", description = "Supprime un actif de la plateforme GRC.")
     @Transactional
     public void delete(Long id) {
+        Actif actif = actifRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Actif non trouvé avec ID : " + id));
+        authorizationService.assertClientAccess(actif.getActivite().getResponsable().getClient().getId());
         if (!actifRepository.existsById(id)) {
             throw new ResourceNotFoundException("Actif non trouvé avec ID : " + id);
         }

@@ -1,4 +1,4 @@
-// src/app/services/actif.service.ts
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap, throwError } from 'rxjs';

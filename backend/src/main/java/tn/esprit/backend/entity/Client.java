@@ -27,6 +27,16 @@ public class Client extends BaseEntity {
     private String adresse;
     private String telephone;
 
+    @Lob
+    @Column(name = "classification_image", columnDefinition = "LONGTEXT")
+    private String classificationImageBase64;
+
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Responsable> responsables = new ArrayList<>();
+
+    @OneToOne(mappedBy = "client", fetch = FetchType.LAZY)
+    private User clientUser;
+
+    @ManyToMany(mappedBy = "assignedClients")
+    private List<User> assignedConsultants = new ArrayList<>();
 }

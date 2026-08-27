@@ -1,0 +1,100 @@
+<div class="users-page">
+  <section class="users-heading">
+    <div>
+      <p class="eyebrow">Administration GRC</p>
+      <h1>Gestion des utilisateurs</h1>
+      <p class="heading-copy">Pilotez les accès à la plateforme, les rôles et les périmètres clients depuis un espace centralisé.</p>
+    </div>
+    <button class="primary-action" type="button" (click)="startCreate()">
+      <i class="bi bi-person-plus"></i>
+      Nouvel utilisateur
+    </button>
+  </section>
+
+  <section class="metrics-grid" aria-label="Indicateurs utilisateurs">
+    <article class="metric-card">
+      <span class="metric-icon metric-blue"><i class="bi bi-people-fill"></i></span>
+      <div><span class="metric-label">Total utilisateurs</span><strong>{{ users.length }}</strong></div>
+    </article>
+    <article class="metric-card">
+      <span class="metric-icon metric-green"><i class="bi bi-shield-check"></i></span>
+      <div><span class="metric-label">Comptes actifs</span><strong>{{ activeCount }}</strong></div>
+    </article>
+    <article class="metric-card">
+      <span class="metric-icon metric-gold"><i class="bi bi-person-workspace"></i></span>
+      <div><span class="metric-label">Consultants</span><strong>{{ consultantsCount }}</strong></div>
+    </article>
+    <article class="metric-card">
+      <span class="metric-icon metric-plum"><i class="bi bi-building"></i></span>
+      <div><span class="metric-label">Comptes clients</span><strong>{{ clientsCount }}</strong></div>
+    </article>
+  </section>
+
+  <section class="workspace" [class.form-open]="showForm">
+    <div class="directory-panel">
+      <div class="panel-toolbar">
+        <div>
+          <h2>Annuaire des accès</h2>
+          <p>{{ filteredUsers.length }} compte{{ filteredUsers.length > 1 ? 's' : '' }} affiché{{ filteredUsers.length > 1 ? 's' : '' }}</p>
+        </div>
+        <div class="filters">
+          <label class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="search" [(ngModel)]="searchTerm" placeholder="Rechercher un nom ou email" aria-label="Rechercher un utilisateur">
+          </label>
+          <select [(ngModel)]="selectedRole" aria-label="Filtrer par rôle">
+            <option value="ALL">Tous les rôles</option>
+            <option *ngFor="let role of roles" [value]="role">{{ roleLabel(role) }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="alert-message error"><i class="bi bi-exclamation-circle"></i>{{ errorMessage }}</div>
+      <div *ngIf="successMessage" class="alert-message success"><i class="bi bi-check-circle"></i>{{ successMessage }}</div>
+
+      <div class="users-table-wrap" *ngIf="!loading && filteredUsers.length > 0">
+        <table class="users-table">
+          <thead>
+            <tr><th>Utilisateur</th><th>Rôle</th><th>Statut</th><th class="actions-heading">Actions</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of filteredUsers">
+              <td>
+                <div class="user-cell">
+                  <span class="user-avatar">{{ getInitials(user) }}</span>
+                  <span><strong>{{ user.firstName }} {{ user.lastName }}</strong><small>{{ user.email }}</small></span>
+                </div>
+              </td>
+              <td><span class="role-badge" [ngClass]="'role-' + user.role.toLowerCase()"><i class="bi" [ngClass]="user.role === 'ADMIN' ? 'bi-shield-lock' : user.role === 'CONSULTANT' ? 'bi-person-workspace' : 'bi-building' "></i>{{ roleLabel(user.role) }}</span></td>
+              <td><span class="status" [class.inactive]="user.enabled === false"><span></span>{{ user.enabled === false ? 'Désactivé' : 'Actif' }}</span></td>
+              <td class="row-actions">
+                <button type="button" class="icon-action" [title]="user.enabled === false ? 'Activer le compte' : 'Désactiver le compte'" (click)="toggleEnabled(user)"><i class="bi" [ngClass]="user.enabled === false ? 'bi-toggle-off' : 'bi-toggle-on'"></i></button>
+                <button type="button" class="icon-action danger" title="Supprimer le compte" (click)="deleteUser(user)"><i class="bi bi-trash3"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div *ngIf="loading" class="empty-state"><span class="spinner-border text-primary"></span><p>Chargement de l'annuaire...</p></div>
+      <div *ngIf="!loading && filteredUsers.length === 0" class="empty-state"><i class="bi bi-person-slash"></i><p>Aucun utilisateur trouvé</p><small>Modifiez les filtres ou créez un nouveau compte.</small></div>
+    </div>
+
+    <aside class="form-panel" *ngIf="showForm">
+      <div class="form-heading"><div><p class="eyebrow">Nouveau compte</p><h2>Créer un utilisateur</h2></div><button type="button" class="close-button" (click)="cancelCreate()" title="Fermer"><i class="bi bi-x-lg"></i></button></div>
+      <p class="form-intro">Le mot de passe sera chiffré côté serveur avant son enregistrement.</p>
+      <form [formGroup]="userForm" (ngSubmit)="submit()">
+        <div class="form-grid">
+          <label>Prénom<input type="text" formControlName="firstName" placeholder="Amine"><small *ngIf="userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched">Champ requis</small></label>
+          <label>Nom<input type="text" formControlName="lastName" placeholder="Ben Ali"><small *ngIf="userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched">Champ requis</small></label>
+        </div>
+        <label>Email professionnel<input type="email" formControlName="email" placeholder="utilisateur@entreprise.com"><small *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">Email valide requis</small></label>
+        <label>Mot de passe temporaire<input type="password" formControlName="password" placeholder="8 caractères minimum"><small *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched">8 caractères minimum</small></label>
+        <fieldset><legend>Rôle attribué</legend><div class="role-options"><label *ngFor="let role of roles" class="role-option" [class.selected]="isRole(role)"><input type="radio" formControlName="role" [value]="role"><span><i class="bi" [ngClass]="role === 'ADMIN' ? 'bi-shield-lock' : role === 'CONSULTANT' ? 'bi-person-workspace' : 'bi-building'"></i><b>{{ roleLabel(role) }}</b><small>{{ role === 'ADMIN' ? 'Accès global' : role === 'CONSULTANT' ? 'Clients affectés' : 'Client associé' }}</small></span></label></div></fieldset>
+        <label *ngIf="isRole('CLIENT')">Client associé<select formControlName="clientId"><option [ngValue]="null">Sélectionner un client</option><option *ngFor="let client of clients" [ngValue]="client.id">{{ client.nom }}</option></select></label>
+        <label *ngIf="isRole('CONSULTANT')">Clients affectés<select formControlName="assignedClientIds" multiple><option *ngFor="let client of clients" [ngValue]="client.id">{{ client.nom }}</option></select><small>Maintenez Ctrl ou Cmd pour plusieurs clients</small></label>
+        <div class="form-actions"><button type="button" class="secondary-action" (click)="cancelCreate()">Annuler</button><button type="submit" class="primary-action" [disabled]="submitting">{{ submitting ? 'Création...' : 'Créer le compte' }}</button></div>
+      </form>
+    </aside>
+  </section>
+</div>

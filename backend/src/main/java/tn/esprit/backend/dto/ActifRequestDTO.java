@@ -33,6 +33,13 @@ public class ActifRequestDTO {
     private Integer niveauMax;
     private java.math.BigDecimal valeur;
     private String actifSecondaire;
+    private String documentsSousFormatPapier;
+    private String actifsDeTypeSupportsElectronique;
+    private String actifsDeTypeMateriel;
+    private String actifsDeTypeLogiciel;
+    private String actifsDeTypePersonnes;
+    private String actifsDeTypeServices;
+    private String actifsDeTypeLocaux;
 
     private Long parentId; // null si c'est un actif racine
 }

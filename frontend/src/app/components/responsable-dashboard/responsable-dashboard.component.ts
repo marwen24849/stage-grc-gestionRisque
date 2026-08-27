@@ -91,7 +91,7 @@ export class ResponsableDashboardComponent implements OnInit {
     if (this.isCreating) {
       this.isCreating = false;
       if (this.selectedResponsable) {
-        // on garde la sélection
+        
       } else if (this.responsables.length > 0) {
         this.selectResponsable(this.responsables[0]);
       }
@@ -161,7 +161,7 @@ export class ResponsableDashboardComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  // ---- AJOUT : navigation vers les activités du responsable sélectionné ----
+  
   goToActivites(): void {
     if (this.selectedResponsable) {
       this.router.navigate(['/activites', this.selectedResponsable.id], {

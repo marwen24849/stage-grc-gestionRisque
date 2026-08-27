@@ -1,10 +1,19 @@
-/* ============================================================
-   actif-classifier.component.css
-   Mêmes tokens que sidebar/topbar/actif-dashboard :
-   navy #052D59, primaire #0B62DD, canvas #F5F7FA, ink #1B202C.
-   Couleurs de niveau (1→4) alignées sur celles utilisées pour
-   les badges de niveau des Actifs : vert / ambre / orange / rouge.
-   ============================================================ */
+.classification-guide {
+  padding: 0.75rem;
+  border: 1px solid rgba(9, 132, 227, 0.2);
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, #f4f9ff, #ffffff);
+}
+
+.classification-guide-image {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  border-radius: 0.5rem;
+  background: #ffffff;
+}
+
 
 :host {
   --ink: #1B202C;

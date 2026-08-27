@@ -20,6 +20,8 @@ public interface ActifMapper {
     @Mapping(target = "updatedAt", ignore = true)
     Actif toEntity(ActifRequestDTO dto);
 
+    @Mapping(source = "activite.responsable.client.id", target = "activite.clientId")
+    @Mapping(source = "activite.responsable.client.classificationImageBase64", target = "activite.clientImageBase64")
     ActifResponseDTO toResponse(Actif entity);
 
     List<ActifResponseDTO> toResponseList(List<Actif> entities);

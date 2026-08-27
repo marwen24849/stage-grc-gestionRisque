@@ -1,11 +1,11 @@
-/* app.component.css (exemple d'intégration) */
+
 
 :host {
   display: block;
 }
 
 .app-content {
-  margin-left: 224px; /* largeur de la sidebar */
+  margin-left: 224px; 
   min-height: 100vh;
   display: flex;
   flex-direction: column;

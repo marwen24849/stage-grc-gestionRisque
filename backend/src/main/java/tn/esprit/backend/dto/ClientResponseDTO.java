@@ -11,6 +11,7 @@ public class ClientResponseDTO {
     private String email;
     private String adresse;
     private String telephone;
+    private String classificationImageBase64;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
