@@ -1,0 +1,111 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+hide circle
+
+class BaseEntity {
+  - id : Long
+  - createdAt : LocalDateTime
+  - updatedAt : LocalDateTime
+}
+
+enum Role {
+  ADMIN
+  CONSULTANT
+  CLIENT
+}
+
+class User extends BaseEntity {
+  - firstName : String
+  - lastName : String
+  - email : String
+  - passwordHash : String
+  - role : Role
+  - enabled : boolean
+}
+
+class Client extends BaseEntity {
+  - nom : String
+  - email : String
+  - adresse : String
+  - telephone : String
+  - classificationImageBase64 : String
+}
+
+class Responsable extends BaseEntity {
+  - nom : String
+  - telephone : String
+  - email : String
+}
+
+class Activite extends BaseEntity {
+  - nom : String
+  - description : String
+}
+
+class Actif extends BaseEntity {
+  - nom : String
+  - description : String
+  - type : String
+  - disponibiliteLevel : Integer
+  - integriteLevel : Integer
+  - confidentialiteLevel : Integer
+  - tracabiliteLevel : Integer
+  - niveauMax : Integer
+  - valeur : BigDecimal
+  - actifSecondaire : String
+}
+
+class NiveauClassification extends BaseEntity {
+  - niveau : Integer
+  - disponibilite : String
+  - integrite : String
+  - confidentialite : String
+  - tracabilite : String
+}
+
+class AuthController
+class ClientController
+class ResponsableController
+class ActiviteController
+class ActifController
+class UserController
+class ChatController
+
+class AuthService
+class ClientServiceImpl
+class ResponsableServiceImpl
+class ActiviteServiceImpl
+class ActifServiceImpl
+class UserManagementService
+class AuthorizationService
+class JwtService
+class SecurityConfig
+class JwtAuthenticationFilter
+class CustomUserDetailsService
+
+User --> Role
+Client "1" *-- "*" Responsable : possède
+Client "1" -- "0..1" User : compte
+User "*" -- "*" Client : assignedClients
+Responsable "1" *-- "*" Activite : gère
+Activite "1" *-- "*" Actif : contient
+Actif "*" --> "1" NiveauClassification : classifie
+Actif "0..1" --> "0..*" Actif : parent
+
+AuthController ..> AuthService
+ClientController ..> ClientServiceImpl
+ResponsableController ..> ResponsableServiceImpl
+ActiviteController ..> ActiviteServiceImpl
+ActifController ..> ActifServiceImpl
+UserController ..> UserManagementService
+ChatController ..> AuthorizationService
+ChatController ..> JwtService
+ChatController ..> ClientServiceImpl
+SecurityConfig ..> JwtAuthenticationFilter
+JwtAuthenticationFilter ..> JwtService
+JwtAuthenticationFilter ..> CustomUserDetailsService
+CustomUserDetailsService ..> User
+@enduml

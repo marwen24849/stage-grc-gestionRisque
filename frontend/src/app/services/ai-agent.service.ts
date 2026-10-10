@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import env from '../config/env';
 
 @Injectable({ providedIn: 'root' })
 export class AiAgentService {
-  private readonly apiUrl = 'http://localhost:8083/ai/chat';
+  private readonly apiUrl = `${env.API_URL}/ai/chat`;
 
   constructor(private http: HttpClient) {}
 

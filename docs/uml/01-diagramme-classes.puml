@@ -1,0 +1,261 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+
+hide circle
+
+class BaseEntity {
+  - id : Long
+  - createdAt : LocalDateTime
+  - updatedAt : LocalDateTime
+}
+
+enum Role {
+  ADMIN
+  CONSULTANT
+  CLIENT
+}
+
+class User extends BaseEntity {
+  - firstName : String
+  - lastName : String
+  - email : String
+  - passwordHash : String
+  - role : Role
+  - enabled : boolean
+  + getAssignedClients() : Set<Client>
+}
+
+class Client extends BaseEntity {
+  - nom : String
+  - email : String
+  - adresse : String
+  - telephone : String
+  - classificationImageBase64 : String
+  + getResponsables() : List<Responsable>
+}
+
+class Responsable extends BaseEntity {
+  - nom : String
+  - telephone : String
+  - email : String
+}
+
+class Activite extends BaseEntity {
+  - nom : String
+  - description : String
+}
+
+class Actif extends BaseEntity {
+  - nom : String
+  - description : String
+  - type : String
+  - disponibiliteLevel : Integer
+  - integriteLevel : Integer
+  - confidentialiteLevel : Integer
+  - tracabiliteLevel : Integer
+  - niveauMax : Integer
+  - valeur : BigDecimal
+  - actifSecondaire : String
+  - documentsSousFormatPapier : String
+  - actifsDeTypeSupportsElectronique : String
+  - actifsDeTypeMateriel : String
+  - actifsDeTypeLogiciel : String
+  - actifsDeTypePersonnes : String
+  - actifsDeTypeServices : String
+  - actifsDeTypeLocaux : String
+}
+
+class NiveauClassification extends BaseEntity {
+  - niveau : Integer
+  - disponibilite : String
+  - integrite : String
+  - confidentialite : String
+  - tracabilite : String
+}
+
+interface ClientService {
+  + create(dto : ClientRequestDTO) : ClientResponseDTO
+  + update(id : Long, dto : ClientRequestDTO) : ClientResponseDTO
+  + findById(id : Long) : ClientResponseDTO
+  + findAll() : List<ClientResponseDTO>
+  + delete(id : Long) : void
+}
+
+class ClientServiceImpl implements ClientService {
+  - clientRepository : ClientRepository
+  - clientMapper : ClientMapper
+  - authorizationService : AuthorizationService
+  + create(dto : ClientRequestDTO) : ClientResponseDTO
+  + update(id : Long, dto : ClientRequestDTO) : ClientResponseDTO
+  + findById(id : Long) : ClientResponseDTO
+  + findAll() : List<ClientResponseDTO>
+  + delete(id : Long) : void
+}
+
+interface ResponsableService {
+  + create(dto : ResponsableRequestDTO) : ResponsableResponseDTO
+  + update(id : Long, dto : ResponsableRequestDTO) : ResponsableResponseDTO
+  + findById(id : Long) : ResponsableResponseDTO
+  + findAll() : List<ResponsableResponseDTO>
+  + findByClient(clientId : Long) : List<ResponsableResponseDTO>
+  + delete(id : Long) : void
+}
+
+class ResponsableServiceImpl implements ResponsableService {
+  - responsableRepository : ResponsableRepository
+  - clientRepository : ClientRepository
+  - responsableMapper : ResponsableMapper
+  - authorizationService : AuthorizationService
+}
+
+interface ActiviteService {
+  + create(dto : ActiviteRequestDTO) : ActiviteResponseDTO
+  + update(id : Long, dto : ActiviteRequestDTO) : ActiviteResponseDTO
+  + findById(id : Long) : ActiviteResponseDTO
+  + findAll() : List<ActiviteResponseDTO>
+  + findByResponsable(responsableId : Long) : List<ActiviteResponseDTO>
+  + delete(id : Long) : void
+}
+
+class ActiviteServiceImpl implements ActiviteService
+
+interface ActifService {
+  + create(dto : ActifRequestDTO) : ActifResponseDTO
+  + update(id : Long, dto : ActifRequestDTO) : ActifResponseDTO
+  + findById(id : Long) : ActifResponseDTO
+  + findAllByActivite(activiteId : Long) : List<ActifResponseDTO>
+  + findRootsByActivite(activiteId : Long) : List<ActifResponseDTO>
+  + findChildren(parentId : Long) : List<ActifResponseDTO>
+  + delete(id : Long) : void
+}
+
+class ActifServiceImpl implements ActifService
+
+class AuthService {
+  - authenticationManager : AuthenticationManager
+  - userRepository : UserRepository
+  - jwtService : JwtService
+  + login(request : LoginRequest) : LoginResponse
+}
+
+class UserManagementService {
+  - userRepository : UserRepository
+  - clientRepository : ClientRepository
+  - passwordEncoder : PasswordEncoder
+  + create(request : CreateUserRequest) : UserResponseDTO
+  + findAll() : List<UserResponseDTO>
+  + setEnabled(id : Long, enabled : boolean) : void
+  + delete(id : Long) : void
+}
+
+class SecurityConfig {
+  + securityFilterChain(http : HttpSecurity) : SecurityFilterChain
+  + passwordEncoder() : PasswordEncoder
+  + authenticationManager(configuration : AuthenticationConfiguration) : AuthenticationManager
+  + corsConfigurationSource() : CorsConfigurationSource
+}
+
+class JwtAuthenticationFilter {
+  - jwtService : JwtService
+  - userDetailsService : CustomUserDetailsService
+  + doFilterInternal(request : HttpServletRequest, response : HttpServletResponse, chain : FilterChain) : void
+}
+
+class CustomUserDetailsService implements UserDetailsService {
+  - userRepository : UserRepository
+  + loadUserByUsername(email : String) : UserDetails
+}
+
+class JwtService {
+  - secret : String
+  - expirationMs : long
+  + generateToken(user : User) : String
+  + extractUsername(token : String) : String
+  + isTokenValid(token : String, email : String) : boolean
+}
+
+class AuthorizationService {
+  - userRepository : UserRepository
+  + currentUser() : User
+  + isAdmin() : boolean
+  + canAccessClient(clientId : Long) : boolean
+  + assertClientAccess(clientId : Long) : void
+  + assertAdmin() : void
+}
+
+class ChatController {
+  - chatClient : ChatClient
+  - toolDiscovery : ToolDiscovery
+  - authorizationService : AuthorizationService
+  + chat(message : String) : String
+  + listTools() : List<Map<String,String>>
+}
+
+class AiConfig {
+  + chatClient(builder : ChatClient.Builder, toolDiscovery : ToolDiscovery) : ChatClient
+}
+
+class ToolDiscovery {
+  - applicationContext : ApplicationContext
+  + getToolObjects() : Object[]
+  + getTools() : List<Map<String,String>>
+}
+
+class DataInitializer {
+  + run(args : String...) : void
+}
+
+class ClientController
+class ResponsableController
+class ActiviteController
+class ActifController
+class UserController
+class AuthController
+
+User --> Role
+
+Client "1" *-- "*" Responsable : possède
+Client "1" -- "0..1" User : clientUser
+User "*" -- "*" Client : assignedClients
+
+Responsable "1" *-- "*" Activite : coordonne
+Activite "1" *-- "*" Actif : contient
+Actif "*" --> "1" NiveauClassification : classifie
+Actif "0..1" --> "0..*" Actif : parent
+
+ClientController ..> ClientServiceImpl
+ResponsableController ..> ResponsableServiceImpl
+ActiviteController ..> ActiviteServiceImpl
+ActifController ..> ActifServiceImpl
+UserController ..> UserManagementService
+AuthController ..> AuthService
+
+ClientServiceImpl ..> ClientRepository
+ResponsableServiceImpl ..> ResponsableRepository
+ActiviteServiceImpl ..> ActiviteRepository
+ActifServiceImpl ..> ActifRepository
+ActifServiceImpl ..> NiveauClassificationRepository
+
+ClientServiceImpl ..> AuthorizationService
+ResponsableServiceImpl ..> AuthorizationService
+ActiviteServiceImpl ..> AuthorizationService
+ActifServiceImpl ..> AuthorizationService
+
+JwtAuthenticationFilter ..> JwtService
+JwtAuthenticationFilter ..> CustomUserDetailsService
+SecurityConfig ..> JwtAuthenticationFilter
+SecurityConfig ..> AuthenticationConfiguration
+
+ChatController ..> AuthorizationService
+ChatController ..> ChatClient
+ChatController ..> ToolDiscovery
+AiConfig ..> ToolDiscovery
+AiConfig ..> ChatClient
+
+DataInitializer ..> NiveauClassificationRepository
+DataInitializer ..> UserRepository
+
+@enduml

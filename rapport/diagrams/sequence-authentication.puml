@@ -1,0 +1,25 @@
+@startuml
+actor Utilisateur
+participant "Angular" as Front
+participant "AuthController" as Controller
+participant "AuthService" as Service
+participant "AuthenticationManager" as Manager
+participant "UserRepository" as Repo
+participant "JwtService" as Jwt
+participant "MySQL" as DB
+
+Utilisateur -> Front : Saisit email et mot de passe
+Front -> Controller : POST /api/auth/login
+Controller -> Service : login(request)
+Service -> Manager : authenticate(username, password)
+Manager -> Repo : findByEmailIgnoreCase(email)
+Repo -> DB : SELECT * FROM users WHERE email = ?
+DB --> Repo : utilisateur
+Repo --> Manager : utilisateur
+Manager --> Service : authentification OK
+Service -> Jwt : generateToken(user)
+Jwt --> Service : JWT 
+Service --> Controller : LoginResponse
+Controller --> Front : 200 OK + JWT
+Front --> Utilisateur : Affichage du tableau de bord
+@enduml

@@ -1,0 +1,60 @@
+version: '3.9'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: grc-mysql
+    environment:
+      MYSQL_DATABASE: risque2
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-ppassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: grc-backend
+    environment:
+      SERVER_PORT: 8083
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/risque2?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+      KEY_SECRET: 28e65c6afd4f3e61b9689a52ba0d8eb2528a0121686378028494a76f90900687
+      JWT_EXPIRATION: 86400000
+      APP_CORS_ORIGIN: http://localhost:4200
+      ADMIN_EMAIL: admin@gmail.com
+      ADMIN_PASSWORD: A8jlqb6qm0m;
+      OPENROUTER_API_KEY: "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"
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8083:8083"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: grc-frontend
+    environment:
+      API_URL: http://localhost:8083
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"
+    restart: unless-stopped
+
+volumes:
+  mysql-data:

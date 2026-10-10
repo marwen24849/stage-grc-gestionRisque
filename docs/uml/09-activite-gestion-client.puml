@@ -1,0 +1,24 @@
+@startuml
+start
+:Utilisateur accède au module client;
+:Angular appelle GET /api/clients ou POST /api/clients;
+if (Action = créer un client) then (oui)
+  :Vérifier les droits ADMIN;
+  :Valider le DTO client;
+  :Vérifier l’unicité de l’email;
+  :ClientServiceImpl.create();
+  :ClientRepository.save(client);
+  :Retourner ClientResponseDTO;
+else (non)
+  :ClientServiceImpl.findAll();
+  :Récupérer les clients autorisés par rôle;
+endif
+if (Erreur métier ou doublon) then (oui)
+  :Lancer IllegalArgumentException ou ResourceNotFoundException;
+  :Retour HTTP 400/404;
+else (non)
+  :Retour HTTP 200/201;
+endif
+:Affichage dans le dashboard client;
+stop
+@enduml

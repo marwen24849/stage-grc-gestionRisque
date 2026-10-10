@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
+import env from '../config/env';
 import { Responsable, ResponsableCreate } from '../models/responsable.model';
 
 @Injectable({ providedIn: 'root' })
 export class ResponsableService {
-  private apiUrl = 'http://localhost:8083/api/responsables';
+  private apiUrl = `${env.API_URL}/api/responsables`;
 
   private responsablesCache = new Map<number, Responsable[]>();
   private responsablesSubject = new BehaviorSubject<Responsable[]>([]);

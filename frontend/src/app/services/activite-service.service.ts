@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
+import env from '../config/env';
 import { Activite, ActiviteCreate } from '../models/activite.model';
 
 @Injectable({ providedIn: 'root' })
 export class ActiviteService {
-  private apiUrl = 'http://localhost:8083/api/activites';
+  private apiUrl = `${env.API_URL}/api/activites`;
 
   private activitesCache = new Map<number, Activite[]>();
   private activitesSubject = new BehaviorSubject<Activite[]>([]);

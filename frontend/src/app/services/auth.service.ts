@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
+import env from '../config/env';
 import { AuthUser, LoginRequest, LoginResponse, Role } from '../models/auth.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly apiUrl = 'http://localhost:8083/api/auth';
+  private readonly apiUrl = `${env.API_URL}/api/auth`;
   private readonly tokenKey = 'grc_access_token';
   private readonly userKey = 'grc_current_user';
 

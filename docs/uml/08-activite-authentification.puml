@@ -1,0 +1,19 @@
+@startuml
+start
+:Utilisateur saisit email et mot de passe;
+:Appel POST /api/auth/login;
+:AuthService.login();
+:AuthenticationManager.authenticate();
+if (Identifiants valides ?) then (oui)
+  :UserRepository.findByEmailIgnoreCase();
+  :JwtService.generateToken(user);
+  :Retourner le token JWT + données utilisateur;
+  :Frontend enregistre le token dans le stockage local/session;
+  :Redirection vers le tableau de bord;
+else (non)
+  :Lancer AuthenticationException;
+  :Retour HTTP 401;
+  :Afficher message « Invalid credentials »;
+endif
+stop
+@enduml

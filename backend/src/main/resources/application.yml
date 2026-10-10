@@ -5,9 +5,9 @@ spring:
   application:
     name: backend
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3307/risque2?createDatabaseIfNotExist=true}
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3377/risque2?createDatabaseIfNotExist=true}
     username: ${SPRING_DATASOURCE_USERNAME:root}
-    password: ${SPRING_DATASOURCE_PASSWORD:password}
+    password: ${SPRING_DATASOURCE_PASSWORD:root_password}
   jpa:
     hibernate:
       ddl-auto: update
@@ -18,7 +18,7 @@ spring:
         format_sql: true
   ai:
     openai:
-      api-key: ${OPENROUTER_API_KEY:}
+      api-key: ${OPENROUTER_API_KEY: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}
       base-url: https://openrouter.ai/api/v1
       chat:
         model: nvidia/nemotron-3.5-lightning:free
@@ -39,6 +39,17 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when_authorized
 
 logging:
   level:

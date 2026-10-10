@@ -2,11 +2,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap, throwError } from 'rxjs';
+import env from '../config/env';
 import { Actif, ActifCreate } from '../models/actif.model';
 
 @Injectable({ providedIn: 'root' })
 export class ActifService {
-  private apiUrl = 'http://localhost:8083/api/actifs';
+  private apiUrl = `${env.API_URL}/api/actifs`;
 
   private actifsSubject = new BehaviorSubject<Actif[]>([]);
   actifs$ = this.actifsSubject.asObservable();

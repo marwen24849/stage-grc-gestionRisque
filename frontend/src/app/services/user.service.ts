@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import env from '../config/env';
 import { CreateUserRequest, ManagedUser } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private readonly apiUrl = 'http://localhost:8083/api/users';
+  private readonly apiUrl = `${env.API_URL}/api/users`;
 
   constructor(private readonly http: HttpClient) {}
 

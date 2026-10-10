@@ -1,0 +1,30 @@
+@startuml
+actor Utilisateur
+participant "Angular" as Front
+participant "ActifController" as Controller
+participant "ActifServiceImpl" as Service
+participant "ActiviteRepository" as ActiviteRepo
+participant "NiveauClassificationRepository" as NiveauRepo
+participant "ActifRepository" as ActifRepo
+participant "AuthorizationService" as Authz
+database "MySQL" as DB
+
+Utilisateur -> Front : Crée ou modifie un actif
+Front -> Controller : POST /api/actifs ou PUT /api/actifs/{id}
+Controller -> Service : create(dto) / update(id, dto)
+Service -> ActiviteRepo : findById(activiteId)
+ActiviteRepo -> DB : SELECT * FROM activites WHERE id = ?
+DB --> ActiviteRepo : activité
+ActiviteRepo --> Service : activité
+Service -> Authz : assertClientAccess(clientId)
+Authz --> Service : autorisation OK
+Service -> NiveauRepo : findById(niveauId)
+NiveauRepo -> DB : SELECT * FROM niveaux_classification WHERE id = ?
+DB --> NiveauRepo : niveau
+Service -> ActifRepo : save(actif)
+ActifRepo -> DB : INSERT/UPDATE actifs
+DB --> ActifRepo : actif enregistré
+Service --> Controller : ActifResponseDTO
+Controller --> Front : 201 / 200 OK
+Front --> Utilisateur : Affichage du bien classé
+@enduml

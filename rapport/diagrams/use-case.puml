@@ -1,0 +1,50 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+actor "Utilisateur non authentifié" as Visitor
+actor "Administrateur" as Admin
+actor "Consultant" as Consultant
+actor "Client" as Client
+
+rectangle "Plateforme GRC" {
+    usecase "S'authentifier" as UC1
+    usecase "Consulter le tableau de bord" as UC2
+    usecase "Gérer les utilisateurs" as UC3
+    usecase "Gérer les clients" as UC4
+    usecase "Gérer les responsables" as UC5
+    usecase "Gérer les activités" as UC6
+    usecase "Gérer les actifs" as UC7
+    usecase "Classer un actif" as UC8
+    usecase "Utiliser l'assistant IA" as UC9
+}
+
+Visitor --> UC1
+Admin --> UC1
+Consultant --> UC1
+Client --> UC1
+
+Admin --> UC2
+Consultant --> UC2
+Client --> UC2
+
+Admin --> UC3
+Admin --> UC4
+Admin --> UC5
+Admin --> UC6
+Admin --> UC7
+Admin --> UC8
+
+Consultant --> UC5
+Consultant --> UC6
+Consultant --> UC7
+Consultant --> UC8
+Consultant --> UC9
+
+Client --> UC5
+Client --> UC6
+Client --> UC7
+Client --> UC8
+Client --> UC9
+@enduml

@@ -1,0 +1,20 @@
+@startuml
+start
+:Utilisateur accède au module IA;
+:Angular appelle /ai/chat;
+:ChatController.chat();
+:AuthorizationService.currentUser();
+if (Utilisateur authentifié ?) then (oui)
+  :Construire le contexte GRC;
+  :Ajouter le rôle et le périmètre du client;
+  :ToolDiscovery récupère les outils disponibles;
+  :ChatClient envoie la requête à OpenRouter;
+  :Le modèle produit une réponse GRC;
+  :Retourner la réponse au front;
+  :Affichage du résultat;
+else (non)
+  :Erreur d'authentification;
+  :Retour d'un message d'erreur;
+endif
+stop
+@enduml

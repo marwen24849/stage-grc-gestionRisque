@@ -1,0 +1,30 @@
+@startuml
+actor Utilisateur
+participant "Angular" as Front
+participant "ActiviteController" as Controller
+participant "ActiviteServiceImpl" as Service
+participant "ResponsableRepository" as RespRepo
+participant "ActiviteRepository" as ActRepo
+participant "AuthorizationService" as Authz
+database "MySQL" as DB
+
+Utilisateur -> Front : Sélectionne un responsable puis crée une activité
+Front -> Controller : POST /api/activites
+Controller -> Service : create(dto)
+Service -> RespRepo : findById(responsableId)
+RespRepo -> DB : SELECT * FROM responsables WHERE id = ?
+DB --> RespRepo : responsable
+RespRepo --> Service : responsable
+Service -> Authz : assertClientAccess(clientId)
+Authz --> Service : autorisation OK
+Service -> ActRepo : existsByNomIgnoreCaseAndResponsableId(nom, responsableId)
+ActRepo -> DB : SELECT COUNT(*)
+DB --> ActRepo : résultat
+ActRepo --> Service : doublon ?
+Service -> ActRepo : save(activite)
+ActRepo -> DB : INSERT INTO activites
+DB --> ActRepo : activité créée
+Service --> Controller : ActiviteResponseDTO
+Controller --> Front : 201 Created
+Front --> Utilisateur : Activité ajoutée
+@enduml

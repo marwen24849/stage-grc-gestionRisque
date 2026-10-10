@@ -1,0 +1,25 @@
+@startuml
+actor Utilisateur
+participant "Angular" as Front
+participant "ClientController" as Controller
+participant "ClientServiceImpl" as Service
+participant "AuthorizationService" as Authz
+participant "ClientRepository" as Repo
+participant "ClientMapper" as Mapper
+database "MySQL" as DB
+
+Utilisateur -> Front : Demande de création ou de liste des clients
+Front -> Controller : GET /api/clients ou POST /api/clients
+Controller -> Service : create(dto) / findAll()
+Service -> Authz : assertAdmin() / currentUser()
+Authz --> Service : autorisation validée
+Service -> Repo : existsByEmail(email) / findAll()
+Repo -> DB : SELECT / COUNT
+DB --> Repo : données clients
+Repo --> Service : clients / résultat
+Service -> Mapper : toEntity(dto) / toResponse(client)
+Mapper --> Service : objet DTO
+Service --> Controller : ClientResponseDTO / List<ClientResponseDTO>
+Controller --> Front : HTTP 200/201 + JSON
+Front --> Utilisateur : Affichage des clients
+@enduml

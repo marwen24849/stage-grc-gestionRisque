@@ -1,0 +1,22 @@
+@startuml
+actor Utilisateur
+participant "Angular" as Front
+participant "ChatController" as Controller
+participant "AuthorizationService" as Authz
+participant "ToolDiscovery" as Tools
+participant "ChatClient" as AI
+participant "OpenRouter" as LLM
+
+Utilisateur -> Front : Pose une question GRC
+Front -> Controller : GET /ai/chat?message=...
+Controller -> Authz : currentUser()
+Authz --> Controller : utilisateur authentifié
+Controller -> Tools : getToolObjects()
+Tools --> Controller : outils disponibles
+Controller -> AI : prompt().system(...).user(message).call()
+AI -> LLM : Requête OpenRouter
+LLM --> AI : réponse du modèle
+AI --> Controller : contenu généré
+Controller --> Front : réponse textuelle
+Front --> Utilisateur : Affichage du message IA
+@enduml

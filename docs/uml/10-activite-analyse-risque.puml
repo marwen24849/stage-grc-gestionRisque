@@ -1,0 +1,20 @@
+@startuml
+start
+:Utilisateur ouvre l’assistant IA;
+:Angular appelle GET /ai/chat?message=...;
+:ChatController.chat(message);
+:AuthorizationService.currentUser();
+if (Utilisateur authentifié et autorisé ?) then (oui)
+  :Construire le contexte système GRC;
+  :Ajouter le rôle et le périmètre du client;
+  :ToolDiscovery récupère les outils Spring AI;
+  :ChatClient appelle OpenRouter;
+  :Modèle génère une réponse GRC;
+  :Retourner le texte à l’interface Angular;
+  :Afficher le résultat dans le chat;
+else (non)
+  :Erreur d’authentification / accès refusé;
+  :Retourner un message d’erreur explicite;
+endif
+stop
+@enduml

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grc-config
+  namespace: grc
+data:
+  SERVER_PORT: "8083"
+  SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/risque2?createDatabaseIfNotExist=true"
+  SPRING_DATASOURCE_USERNAME: "root"
+  JWT_EXPIRATION: "86400000"
+  APP_CORS_ORIGIN: "http://grc.local"
+  SPRING_PROFILES_ACTIVE: "prod"
+  OPENROUTER_MODEL: "nvidia/nemotron-3.5-lightning:free"

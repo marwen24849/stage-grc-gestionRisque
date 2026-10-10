@@ -2,11 +2,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
+import env from '../config/env';
 import { Client, ClientCreate } from '../models/client.model';
 
 @Injectable({ providedIn: 'root' })
 export class ClientService {
-  private apiUrl = 'http://localhost:8083/api/clients';
+  private apiUrl = `${env.API_URL}/api/clients`;
 
   private clientsSubject = new BehaviorSubject<Client[]>([]);
   clients$ = this.clientsSubject.asObservable();
